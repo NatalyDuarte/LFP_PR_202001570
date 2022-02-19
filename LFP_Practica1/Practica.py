@@ -1,9 +1,11 @@
+from distutils.archive_util import make_archive
 from sys import flags
 from tkinter import *
 from tkinter import filedialog
 from turtle import title
 from Producto import Producto
 from Grafica import Grafica
+import matplotlib 
 import matplotlib.pyplot as plt
 import numpy as np
 import re
@@ -14,7 +16,6 @@ def ArchivoMemoria(rutarchi):
         with open(rutarchi, encoding='utf-8') as file:
             datarchi = file.read()
             #print("\n")
-            print(datarchi)
             return datarchi
     except:
         print('No se pudo abrir el archivo porque no existe: ' + rutarchi)
@@ -31,15 +32,15 @@ def AnalisisArchi(archiv,archivo):
             break
         else:
             mess += i
-    print("Mes: ", mess)
+    mess=mess.replace(":","")
+    #print("Mes: ", mess)
     #Buscando el año
     global ano2
     ano=re.findall(r'\d\d\d\d',archiv)
     ano1=ano[0]
     ano2=ano1.replace("["," ")
-    print("El año es :", ano2)      
+    #print("El año es :", ano2)      
     global ayos
-    #ayos = sinayo.split(";")
     #Buscando los productos
     datospara = ''
     para1 = False
@@ -53,11 +54,13 @@ def AnalisisArchi(archiv,archivo):
             break
     j = ''
     for a in datospara:
-        if a == ";" or a == "[" or a == "\"" or a == "\n":
+        if a == ";" or a == "[" or a == "\“" or a == "\n":
             continue
         else:
             j += a
     pruebalista = j.replace("]", ",")
+    pruebalista=pruebalista.replace('“','' )
+    pruebalista=pruebalista.replace('”','' )
     # CREA UNA LISTA CON LOS DATOS
     arreglo = pruebalista.split(",")
     global producto
@@ -67,9 +70,10 @@ def AnalisisArchi(archiv,archivo):
             continue
         else:
             ganancia=float(arreglo[m+1])*float(arreglo[m+2])
+            ganancia=round(ganancia,2)
             producto.append(Producto(arreglo[m], arreglo[m+1], arreglo[m+2],str(ganancia)))
-    for produc in producto:
-        print(produc)
+    #for produc in producto:
+        #print(produc)
     #Buscando datos grafica
     #Buscando nombre_______________________________________-
     global nom
@@ -80,18 +84,19 @@ def AnalisisArchi(archiv,archivo):
         nom=nome
         nom1=nom[len(nom)-1]
         nom2=nom1.replace(":",";")
-        nom3=nom2.replace("\"\""," " )
-        print(nom3)
+        nom3=nom2.replace('"','' )
+        nom4=re.sub(r'\s+',' ',nom3).strip()
+        #print(nom4)
         # CREA UNA LISTA CON LOS DATOS DE NOMBRE
-        arreglo = nom3.split(";")
+        arreglo = nom4.split(";")
         grafi = []
         for m in range(0, len(arreglo),2):
             if m == len(arreglo)-1:
                 continue
             else:
                 no=arreglo[m+1]
-                no.lower()
-                print(no)
+                no=no.lower()
+                #print(no)
     #Buscando tipo de grafica_______________________________________-
         global tipo
         tip1=re.findall(r'grafica\s*:\s*"[\w\s,\.]+"',archivo,flags=re.I)
@@ -100,133 +105,166 @@ def AnalisisArchi(archiv,archivo):
             tipo=tip1
             tipo1=tipo[len(tipo)-1]
             tipo2=tipo1.replace(":",";")
-            print(tipo2)
+            tipo3=tipo2.replace('"','' )
+            tipo3=tipo3.rstrip("")
+            tipo4=tipo3.lstrip("")
+            tipo4=tipo4.replace(' ','')
+            tipo4=tipo4.replace("\n","")
+            #print(tipo4)
         # CREA UNA LISTA CON LOS DATOS DE TIPO
-            arreglo1 = tipo2.split(";")
+            arreglo1 = tipo4.split(";")
             for m in range(0, len(arreglo1),2):
                 if m == len(arreglo1)-1:
                  continue
                 else:
                     ti=arreglo1[m+1]
-                    ti.lower()
-                    print(ti)
+                    ti=ti.lower()
+                    #print(ti)
             #Buscando titulo de grafica_______________________________________-
             global titulo
             tit1=re.findall(r'titulo\s*:\s*"[\w\s,\.]+"',archivo,flags=re.I)
+            titu=" " 
             titu1=listavacia(tit1)
             if (titu1== False):
                 titulo=tit1
                 titulo1=titulo[len(titulo)-1]
                 titulo2=titulo1.replace(":",";")
-                print(titulo2)
+                titulo3=titulo2.replace('"','' )
+                titulo4=re.sub(r'\s+',' ',titulo3).strip()
+                #print(titulo4)
                 # CREA UNA LISTA CON LOS DATOS DE TITULO
-                arreglo2 = titulo2.split(";")
+                arreglo2 = titulo4.split(";")
+                titu=" "
                 for m in range(0, len(arreglo2),2):
                     if m == len(arreglo2)-1:
                         continue
                     else:
                         titu=arreglo2[m+1]
-                        titu.lower()
-                        print(titu)
+                        titu=titu.lower()
+                        #print(titu)
         
             #Buscando titulox de grafica_______________________________________-
             global titulox
             titx1=re.findall(r'titulox\s*:\s*"[\w\s,\.]+"',archivo,flags=re.I)
+            titux=" " 
             titux1=listavacia(titx1)
             if (titux1== False):
                 titulox=titx1
                 titulox1=titulox[len(titulox)-1]
                 titulox2=titulox1.replace(":",";")
-                print(titulox2)
+                titulox3=titulox2.replace('"','' )
+                titulox4=re.sub(r'\s+',' ',titulox3).strip()
+                #print(titulox4)
                 # CREA UNA LISTA CON LOS DATOS DE TITULO
-                arreglo3 = titulox2.split(";")
+                arreglo3 = titulox4.split(";")
+                titux=" "
                 for m in range(0, len(arreglo3),2):
                     if m == len(arreglo3)-1:
                         continue
                     else:
                         titux=arreglo3[m+1]
-                        titux.lower()
-                        print(titux)
+                        titux=titux.lower()
+                        #print(titux)
             #Buscando tituloy de grafica_______________________________________-
             global tituloy
             tity1=re.findall(r'tituloy\s*:\s*"[\w\s*,\.]+"',archivo,flags=re.I)
+            tituy=" " 
             tituy1=listavacia(tity1)
             if (tituy1== False):
                 tituloy=tity1
                 tituloy1=tituloy[len(tituloy)-1]
                 tituloy2=tituloy1.replace(":",";")
-                print(tituloy2)
+                tituloy3=tituloy2.replace('"','' )
+                tituloy4=re.sub(r'\s+',' ',tituloy3).strip()
+                #print(tituloy4)
                 # CREA UNA LISTA CON LOS DATOS DE TITULO
-                arreglo4 = tituloy2.split(";")  
+                arreglo4 = tituloy4.split(";") 
                 for m in range(0, len(arreglo4),2):
                     if m == len(arreglo4)-1:
                         continue
                     else:
                         tituy=arreglo4[m+1]
-                        tituy.lower()
-                        print(tituy)
+                        tituy=tituy.lower()
+                        #print(tituy)
+            if titu==" ":
+                titu=mess+"-"+ano2
             grafi.append(Grafica(no,ti, titu, titux, tituy))
             print("comprobando")
-            for i in grafi:
-                print(i)
+            #for i in grafi:
+                #print(i)
                
         else:
             print("Error el archivo no contiene los campos obligatorios")
     else:
         print("Error el archivo no contiene los campos obligatorios")
-    Graficar(producto,grafi)
+    Graficar()
             
-def Graficar(produ,gra):
-     for f in gra :
-        if(f.grafica == "\"pie\"" or f.grafica == "\"pastel\"" ):
+def Graficar():    
+    for f in grafi :
+        if(f.grafica == "pie" or f.grafica == " pie" or f.grafica == "pie " or f.grafica == " pie " or f.grafica == "pastel" or f.grafica == " pastel" or f.grafica == "pastel " or f.grafica == " pastel " ):
             arrex=[]
-            for g in produ :
-                arrex.append(g.ganancia)
+            labels=[]
+            for g in range(0, len(producto)) :
+                labels.append(producto[g].producto)
+                arrex.append(float(producto[g].ganancia))
             colors = plt.get_cmap('Greens')(np.linspace(0.2, 0.7, len(arrex)))
             fig, ax = plt.subplots()
-            ax.pie(arrex, colors=colors, radius=3, center=(4, 4), wedgeprops={"linewidth": 1, "edgecolor": "white"}, frame=True)
-            ax.set(xlim=(0, 8), xticks=np.arange(1, 8),ylim=(0, 8), yticks=np.arange(1, 8))
+            ax.pie(arrex, colors=colors,labels=labels,autopct=("%1.f%%"))
+            #ax.set(xlim=(0, 8), xticks=np.arange(1, 8),ylim=(0, 8), yticks=np.arange(1, 8))
+            ax.axis('equal')
+            plt.title(f.titulo)
+            plt.xlabel(f.titulox)
+            plt.ylabel(f.tituloy)
+            plt.legend()
+            plt.savefig(f.nombre+".png")
             plt.show()
-        if(f.grafica == "\"Barras\"" ):
+            print("Imagen generada exitosamente")
+        if(f.grafica == " barras" or f.grafica == "barras" or f.grafica == "barras " or f.grafica == " barras "):
             arrx=[]
             arry=[]
-            for g in produ :
-                arrx.append(g.producto)
-                arry.append(g.ganancia)
+            for g in range(0, len(producto)) :
+                arrx.append(producto[g].producto)
+                arry.append(producto[g].ganancia)
             si=np.arange(len(arrx))
             fig1, ax1 = plt.subplots()
             recx=ax1.bar(si - 0.5/2,arry,0.5,edgecolor="Red")
             #ax1.bar(arrx, arry, width=1, edgecolor="Red", linewidth=0.9)
-            ax1.set_title(grafi.titulo)
-            ax1.set_xlabel(grafi.titulox)
-            ax1.set_ylabel(grafi.tituloy)
+            ax1.set_title(f.titulo)
+            ax1.set_xlabel(f.titulox)
+            ax1.set_ylabel(f.tituloy)
             ax1.set_xticks(si,arrx)
-            ax1.bar_label(recx,padding=4)
+            ax1.bar_label(recx,padding=1)
             fig1.tight_layout()
-            plt.savefig(grafi.nombre+".png")
+            plt.savefig(f.nombre+".png")
             plt.show()
-        if(f.grafica == "\"lineas\"" ):
+            print("Imagen generada exitosamente")
+        if(f.grafica == "lineas" or f.grafica == " lineas" or f.grafica == "lineas " or f.grafica == " lineas "):
             arx=[]
             ary=[]
-            for g in produ :
-                arx.append(g.producto)
-                ary.append(g.ganancia)
-"""
-            if(f.instruccion!="titulo"):
-                plt.title(f.resu)
-            else:
-                plt.title("Reporte de Ventas_"+mess+"-"+ano2)
-            if(f.instruccion!="titulox"):
-                plt.xlabel(f.resu)
-            else:
-                plt.xlabel(" ") 
-            if(f.instruccion!="tituloy"):
-                plt.ylabel(f.resu)
-            else:
-                plt.ylabel(" ") 
-            plt.legend()
-            plt.show
-        """
+            for g in range(0, len(producto)) :
+                arx.append(producto[g].producto)
+                ary.append(producto[g].ganancia)
+            plt.title(f.titulo)
+            plt.plot(arx,ary)
+            plt.xlabel(f.titulox)
+            plt.ylabel(f.tituloy)
+            plt.savefig(f.nombre+".png")
+            plt.show()
+            print("Imagen generada exitosamente")
+        if(f.grafica == "líneas" or f.grafica == " líneas" or f.grafica == "líneas " or f.grafica == " líneas "):
+            arx=[]
+            ary=[]
+            for g in range(0, len(producto)) :
+                arx.append(producto[g].producto)
+                ary.append(producto[g].ganancia)
+            plt.title(f.titulo)
+            plt.plot(arx,ary)
+            plt.xlabel(f.titulox)
+            plt.ylabel(f.tituloy)
+            plt.savefig(f.nombre+".png")
+            plt.show()
+            print("Imagen generada exitosamente")
+
 
  #_________________________________________________________________________________
 def Ordenamiento(arreglo):
@@ -289,8 +327,8 @@ def Reporte():
 		</div>
         """
     OrdenamientoporVendido(producto)    
-    texto=texto+"<H4><font color=\"Black\" face=\"Comic Sans MS,arial\"><center>*El producto mas vendido es:"+producto[(len(producto)-1)].producto+" Con"+producto[(len(producto)-1)].cantidad+" ventas. Y ganancia de Q."+producto[(len(producto)-1)].ganancia+"</font></H1>"
-    texto=texto+"<H4><font color=\"Black\" face=\"Comic Sans MS,arial\"><center>*El producto menos vendido es:"+producto[0].producto+" Con"+producto[0].cantidad+" ventas. Y ganancia de Q."+producto[0].ganancia+"</font></H1>"
+    texto=texto+"<H4><font color=\"Black\" face=\"Comic Sans MS,arial\"><center>*El producto mas vendido es:"+producto[(len(producto)-1)].producto+" Con "+producto[(len(producto)-1)].cantidad+" ventas. Y ganancia de Q."+producto[(len(producto)-1)].ganancia+"</font></H1>"
+    texto=texto+"<H4><font color=\"Black\" face=\"Comic Sans MS,arial\"><center>*El producto menos vendido es:"+producto[0].producto+" Con "+producto[0].cantidad+" ventas. Y ganancia de Q."+producto[0].ganancia+"</font></H1>"
     conti="""</section>
 	            </body>
             </html>
@@ -331,10 +369,8 @@ while hasta ==True:
         if (rutarecibida != None and rutarecibida2 != None):
             print("Analizando....")
             AnalisisArchi(rutarecibida,rutarecibida2)
-
         else:
             print("No se encontro ningun archivo!")
-            Menu()
     elif opc == 4:
             if(producto!=None):
                 Reporte()
