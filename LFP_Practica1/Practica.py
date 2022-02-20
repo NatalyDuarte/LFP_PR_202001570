@@ -54,13 +54,14 @@ def AnalisisArchi(archiv,archivo):
             break
     j = ''
     for a in datospara:
-        if a == ";" or a == "[" or a == "\“" or a == "\n":
+        if a == ";" or a == "[" or a == "\“" or a == "\"" or a == "\n":
             continue
         else:
             j += a
     pruebalista = j.replace("]", ",")
     pruebalista=pruebalista.replace('“','' )
     pruebalista=pruebalista.replace('”','' )
+    pruebalista=pruebalista.replace('"','' )
     # CREA UNA LISTA CON LOS DATOS
     arreglo = pruebalista.split(",")
     global producto
