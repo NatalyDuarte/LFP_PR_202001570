@@ -28,14 +28,13 @@ class Ventana(QMainWindow):
         archivo = self.plainTextEdit.toPlainText()
         anali.analizar(archivo)
         anali.imprimir()
-        anali.CrearHtml()
+        #anali.CrearHtml()
 
     def lectura(self):
         global rutarecibida
         archi=filedialog.askopenfilename(filetypes=[("Archivos FORM", ".form .FORM")])
         rutarecibida=self.ArchivoMemoria(archi)
-        self.plainTextEdit.setPlainText(rutarecibida)
-        
+        self.plainTextEdit.setPlainText(rutarecibida)      
 
     def ArchivoMemoria(self, rutarchi):
         try:

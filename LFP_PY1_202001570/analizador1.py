@@ -51,304 +51,94 @@ class analizador1:
             cade= codigo[i]
             #ESTADO 0
             if estado == 0:
-                if cade == '<':
+                #SIMBOLOS
+                if cade == '~':
+                    columna += 1
                     buffer += cade
-                    self.listaTokens.append(tokens(buffer, 'Signo_menor', fila, columna))
+                    self.listaTokens.append(tokens('Virgulilla',buffer, fila, columna))
                     buffer = ''
-                    columna += 1
-                elif cade == '>':
-                    buffer += cade
-                    self.listaTokens.append(tokens(buffer, 'Signo_mayor', fila, columna))
-                    buffer = ''
-                    columna += 1
-                elif cade == '~':
-                    buffer += cade
-                    self.listaTokens.append(tokens(buffer, 'Virgulilla', fila, columna))
-                    buffer = ''
-                    columna += 1
-                elif cade == ',':
-                    buffer += cade
-                    self.listaTokens.append(tokens(buffer, 'Coma', fila, columna))
-                    buffer = ''
-                    columna += 1
-                elif cade == ':':
-                    buffer += cade
-                    self.listaTokens.append(tokens(buffer, 'Dos_puntos', fila, columna))
-                    buffer = ''
-                    columna += 1
-                elif cade == '-':
-                    buffer += cade
-                    self.listaTokens.append(tokens(buffer, 'Guion', fila, columna))
-                    buffer = ''
-                    columna += 1
-                elif cade == '[':
-                    buffer += cade
-                    self.listaTokens.append(tokens(buffer, 'Corchete_Abrir', fila, columna))
-                    buffer = ''
-                    columna += 1
-                elif cade == ']':
-                    buffer += cade
-                    self.listaTokens.append(tokens(buffer, 'Corchete_Cerrar', fila, columna))
-                    buffer = ''
-                    columna += 1
-                elif re.search('\s*"[\w\s,\.]+"', cade):
-                    buffer += cade
-                    columna += 1
-                    estado = 1
-                elif cade=='"' or re.search('[a-zA-Z]',cade):
-                    buffer += cade
-                    columna += 1
-                    estado = 4
-                elif cade=="'" or re.search('[a-zA-Z]',cade):
-                    buffer += cade
-                    columna += 1
-                    estado = 4
-                elif cade == '\n':
-                    fila += 1
-                    columna = 1
-                elif cade == '\t' or cade==' ':
-                    columna += 1
-                elif cade == centinela:
-                    columna +=1
-                    buffer += cade
-                    if i == len(codigo):
-                        print("Se analizo con exito el archivo")
-                        self.listaTokens.append(tokens(buffer, '<<EOFF>>', fila, columna))
-                    else: 
-                        print("No se puedo analizar por completo")
-                        self.listaErrores.append(error('Error Léxico', buffer, fila, columna))
-                    buffer = ''
-                    estado = 0
-                    
-                else:
-                    buffer += cade
-                    self.listaErrores.append(error('Error Léxico', buffer, fila, columna))
-                    buffer = ''
-                    columna += 1
-            elif  estado == 1:
-                if re.search('\s*"[\w\s,\.]+"', cade):
-                    buffer += cade
-                    columna += 1
-                    estado = 1
-                elif cade ==',':
-                    buffer += cade
-                    columna += 1
-                    estado = 2
-                else:
-                    self.listaTokens.append(tokens(buffer, 'Cadena', fila, columna))
-                    buffer = ''
-                    i -=1
-                    estado = 0
-            elif  estado == 2:
-                if re.search('\s*"[\w\s,\.]+"', cade):
-                    buffer += cade
-                    columna += 1
-                    estado = 2
-                else:
-                    self.listaErrores.append(error('Error Léxico', buffer, fila, columna))
-                    buffer = ''
-                    i -=1
-                    estado = 0
-            elif  estado == 3:
-                if re.search('\s*"[\w\s,\.]+"', cade):
-                    self.listaTokens.append(tokens(buffer, 'Cadena', fila, columna))
-                    buffer = ''
-                    estado = 3
-                    '''
-                    tipo=re.findall(r'tipo\s*:\s*"[\w\s,\.]+"',cade,flags=re.I)
-                    valor=re.findall(r'valor\s*:\s*"[\w\s,\.]+"',cade,flags=re.I)
-                    fondo=re.findall(r'fondo\s*:\s*"[\w\s,\.]+"',cade,flags=re.I)
-                    #   busacar expresion regular para listas, agregarlos como que si fuera una matriz
-                    #valores=re.findall(r'valores\s*:\[\s*"[\w\s,\.]+"',cade,flags=re.I)
-                    valores="['Masculino','Femenino']"
-                    valores=valores.replace(' ','')
-                    valores=valores.replace("'",'')
-                    evento=re.findall(r'evento\s*:\s*"[\w\s,\.]+"',cade,flags=re.I)
-                    nombre=re.findall(r'nombre\s*:\s*"[\w\s,\.]+"',cade,flags=re.I)
-                    '''
-                else: 
-                    self.listaTokens.append(tokens(buffer, 'Cadena', fila, columna))
-                    buffer = ''
-                    estado = 0
-            elif  estado == 4:
-                if cade=='"' or re.search('[a-zA-Z]',cade) or re.search('\s*"[\w\s,\.]+"', cade):
-                    buffer += cade
-                    columna += 1
-                    estado = 4
-                else: 
-                    tipotoken=""
-                    if buffer.lower=="formulario":
-                        tipotoken="FORMULARIO"
-                    elif buffer.lower=="tipo":
-                        tipotoken="TIPO"
-                        tipo = ""
-                        tmp = i+2
-                        while cade[tmp] != '\"':
-                            tipo += cade[tmp]
-                            tmp += 1
-                    elif buffer.lower=="valor":
-                        tipotoken="VALOR"
-                        valor = ""
-                        tmp = i+1
-                        while cade[tmp] != '\"':
-                            valor += cade[tmp]
-                            tmp += 1
-                    elif buffer.lower=="fondo":
-                        tipotoken="FONDO"
-                        fondo = ""
-                        tmp = i+1
-                        while cade[tmp] != '\"':
-                            fondo += cade[tmp]
-                            tmp += 1
-                    elif buffer.lower=="nombre":
-                        tipotoken="NOMBRE"
-                        nombre = ""
-                        tmp = i+1
-                        while cade[tmp] != '\"':
-                            nombre += cade[tmp]
-                            tmp += 1
-                    elif buffer.lower=="valores":
-                        tipotoken="VALORES"
-                        valores = ""
-                        tmp = i+1
-                        while cade[tmp] != '\"':
-                            valores += cade[tmp]
-                            tmp += 1
-                    elif buffer.lower=="evento":
-                        tipotoken="EVENTO"
-                        evento = ""
-                        tmp = i+1
-                        while cade[tmp] != '\"':
-                            evento += cade[tmp]
-                            tmp += 1
-                    else: 
-                        tipotoken="IDENTIFICADOR"
-                    self.listaTokens.append(tokens(buffer, tipotoken, fila, columna))
-                    self.listaHtml.append(html(tipotoken,valor.strip(),fondo.strip(),valores.strip(),evento.strip(),nombre.strip()))
-                    buffer = ''
-                    i -= 1
-                    estado = 0
-            i += 1
-        return codigo
-        '''
-        while i < len(codigo):
-            cade= codigo[i]
-            #ESTADO 0
-            if estado == 0:
-                #signos
-                if cade == ',':
-                    columna += 1
-                    buffer += cade
-                    self.listaTokens.append(tokens('Coma',buffer, fila, columna))
-                    buffer = ''
-                    estado = 0
-                    i+=1        
-                elif cade == ':':
-                    columna += 1
-                    buffer += cade
-                    self.listaTokens.append(tokens( 'Dos_puntos',buffer, fila, columna))
-                    buffer = ''
-                    estado = 0
-                    i+=1 
-                elif cade == '<':
-                    columna += 1
-                    buffer += cade
-                    self.listaTokens.append(tokens('Signo_menor',buffer, fila, columna))
-                    buffer = ''                    
-                    estado = 0
-                    i+=1
+                    i += 1
                 elif cade == '>':
                     columna += 1
                     buffer += cade
                     self.listaTokens.append(tokens('Signo_mayor',buffer, fila, columna))
                     buffer = ''
-                    estado = 0
-                    i+=1
-                elif cade == '~':
-                    columna += 1
-                    buffer += cade
-                    self.listaTokens.append(tokens('Virgulilla',buffer, fila, columna))
-                    buffer = ''
-                    estado = 0
-                    i+=1
-                elif cade == '-':
-                    columna += 1
-                    buffer += cade
-                    self.listaTokens.append(tokens('Guion',buffer, fila, columna))
-                    buffer = ''
-                    estado = 0
-                    i+=1
+                    i += 1
                 elif cade == '[':
                     columna += 1
                     buffer += cade
                     self.listaTokens.append(tokens('Corchete_Abrir',buffer, fila, columna))
                     buffer = ''
-                    estado = 0
+                    i += 1
+                elif cade == '<':
+                    columna += 1
+                    buffer += cade
+                    self.listaTokens.append(tokens('Signo_menor',buffer, fila, columna))
+                    buffer = ''
                     i+=1
+                elif cade == ':':
+                    columna += 1
+                    buffer += cade
+                    self.listaTokens.append(tokens('Dos_puntos',buffer, fila, columna))
+                    buffer = ''
+                    i += 1
+                elif cade == ',':
+                    columna += 1
+                    buffer += cade
+                    self.listaTokens.append(tokens('Coma',buffer, fila, columna))
+                    buffer = ''
+                    i += 1
+                elif cade == '-':
+                    columna += 1
+                    buffer += cade
+                    self.listaTokens.append(tokens('Guion',buffer, fila, columna))
+                    buffer = ''
+                    i += 1
                 elif cade == ']':
                     columna += 1
                     buffer += cade
                     self.listaTokens.append(tokens('Corchete_Cerrar',buffer, fila, columna))
                     buffer = ''
-                    estado = 0
-                    i+=1
-                #palabras reservadas e identificadores
+                    i += 1
                 elif re.search('[a-zA-Z]', cade):
-                    columna += 1
                     buffer += cade
                     columna += 1
-                    estado = 1 
-                    i+=1
-                #cadena
+                    estado = 1
+                #CADENA
                 elif cade == '"':
-                    columna += 1
                     buffer += cade
+                    columna += 1
                     estado = 2
-                    i+=1
-                #espacios, saltos de lineas, tabuladores
-                elif cade == '\t' or cade==' ':
-                    columna += 1
-                    estado = 0
-                    i+=1
+                    i +=1
                 elif cade == '\n':
-                    columna = 1
                     fila += 1
-                    estado = 0
-                    i+=1
-                #centinela
+                    columna = 1
+                    i +=1
+                elif cade == '\t' or cade == " ":
+                    columna += 1
+                    i +=1
                 elif cade == centinela:
-                    buffer += cade
-                    if i == len(codigo)-1:
-                        print("Se analizo con exito el archivo")
-                        self.listaTokens.append(tokens('<<EOFF>>',buffer, fila, columna))
-                    else: 
-                        print("No se puedo analizar por completo")
-                        self.listaErrores.append(error('Error Léxico', buffer, fila, columna))
-                    buffer = ''
-                    columna +=1
-                    i+=1
-                    estado = 0
+                    self.listaTokens.append(tokens('<<EOFF>>',buffer, fila, columna))
+                    print('¡DATOS ACEPTADOS!')
                     break
-                #errores
                 else:
                     buffer += cade
                     self.listaErrores.append(error('Error Léxico', buffer, fila, columna))
                     buffer = ''
-                    columna +=1
+                    columna += 1
                     i+=1
-                    estado = 0
-            # ESTADO 1 -palabras reservadas
+                    estado = 0 
             elif estado == 1:
                 if re.search('[a-zA-Z]', cade):
                     buffer += cade
-                    columna +=1
-                    estado = 1 
-                    i+=1
+                    columna += 1
+                    estado = 1
                 else:
-                    global Palabrareservada
-                    Palabrareservada=True
+                    global tipotoken
                     tipotoken=""
-                    if buffer.lower()=="tipo":
+                    if buffer.lower()=="formulario":
+                        tipotoken="FORMULARIO"
+                    elif buffer.lower()=="tipo":
                         tipotoken="TIPO"
                     elif buffer.lower()=="valor":
                         tipotoken="VALOR"
@@ -360,38 +150,25 @@ class analizador1:
                         tipotoken="VALORES"
                     elif buffer.lower()=="evento":
                         tipotoken="EVENTO"
-                    else:
-                        Palabrareservada=False
+                    else: 
                         tipotoken="IDENTIFICADOR"
-                    if Palabrareservada==True:
-                        if buffer.lower()=="formulario":
-                            self.listaTokens.append(tokens(tipotoken,buffer, fila, columna))
-                            buffer = ''
-                            estado = 0
-                        else:
-                            self.listaTokens.append(tokens(tipotoken,buffer, fila, columna))
-                            buffer = ''
-                            estado = 0
-                    else:
-                        self.listaErrores.append(error('Error Léxico', buffer, fila, columna))
-                        buffer = ''
-                        i+=1
-                        estado = 0
-            # ESTADO 2-cadena
-            elif estado == 2:
-                if cade == '"':
-                    self.listaTokens.append(tokens("Cadena",buffer, fila, columna))
+                    self.listaTokens.append(tokens(tipotoken,buffer, fila, columna))
                     buffer = ''
-                    columna += 1
-                    i+=1
+                    estado=0
+                    i += 1
+            elif estado == 2:
+                if  cade == '"':
+                    self.listaTokens.append(tokens('Cadena',buffer, fila, columna))
+                    buffer = ''
                     estado = 0
+                    i += 1
                 else:
                     buffer += cade
-                    columna = 1
-                    estado =2
-                    i+=1
-            i += 1
-        '''
+                    columna += 1
+                    estado=2
+                    i += 1          
+        return codigo
+        
     def imprimir(self):
         print("\n\n==========Lista tokens===============")
         for i in self.listaTokens:
@@ -508,17 +285,8 @@ class analizador1:
         doc.write(bytes(texto1,"'utf-8'"))
         doc.close()
         webbrowser.open_new_tab('ReporteTokens.html')
+
     def CrearHtml(self):
-        #etiqueta- <label>
-        #texto- <input type="text" name="tipo_de_dato"/>
-        # grupo-radop-  <input type="radio" name="empleoactual" value="tiempocompleto"> 
-        #grupo-option - <select name="select">
-            #<option value="value1">Value 1</option>
-            #<option value="value2" selected>Value 2</option>
-            #<option value="value3">Value 3</option>
-        #</select>
-        #boton- <input type="button">
-        #
         texto1 = """<!doctype html>
                 <html lang="en">
                 <head>
