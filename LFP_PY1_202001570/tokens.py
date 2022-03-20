@@ -11,7 +11,6 @@ class tokens:
     def getLexema (self):
         return self.lexema
     
-
     def strToken(self):
         print("\n=================================")
         print("Tipo:" +self.tipo)

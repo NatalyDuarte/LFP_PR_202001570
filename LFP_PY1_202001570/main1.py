@@ -27,8 +27,8 @@ class Ventana(QMainWindow):
     def analizardoc(self):
         archivo = self.plainTextEdit.toPlainText()
         anali.analizar(archivo)
-        anali.imprimir()
         anali.agregarlisthtml()
+        anali.imprimir()
         #anali.CrearHtml()
 
     def lectura(self):

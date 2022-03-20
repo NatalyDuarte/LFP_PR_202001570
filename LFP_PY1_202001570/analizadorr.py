@@ -22,18 +22,8 @@ class analizadorr:
         centinela = '$'
         estado = 0
         codigo += centinela
-
         # AUTOMATA
         i = 0
-        global tipo
-        global valor
-        global fondo
-        global evento
-        global nombre
-        tipo=" "
-        fondo=" "
-        evento=" "
-        nombre=" "
         while i < len(codigo):
             cade= codigo[i]
             #ESTADO 0
@@ -133,66 +123,16 @@ class analizadorr:
                         tipotoken="FORMULARIO"
                     elif buffer.lower()=="tipo":
                         tipotoken="TIPO"
-                        '''
-                        tmp = i+2
-                        while codigo[tmp] != '\"':
-                            tipo += codigo[tmp]
-                            tmp += 1
-                        print(tipo)
-                        '''
                     elif buffer.lower()=="valor":
                         tipotoken="VALOR"
-                        '''
-                        tmp1 = i+2
-                        while codigo[tmp1] != '\"':
-                            valor += codigo[tmp1]
-                            tmp1 += 1
-                        print(valor)
-                        '''
                     elif buffer.lower()=="fondo":
                         tipotoken="FONDO"
-                        '''
-                        tmp2 = i+2
-                        while codigo[tmp2] != '\"':
-                            fondo += codigo[tmp2]
-                            tmp2 += 1
-                        print(fondo)
-                        '''
                     elif buffer.lower()=="nombre":
                         tipotoken="NOMBRE"
-                        '''
-                        tmp3 = i+2
-                        while codigo[tmp3] != '\"':
-                            nombre += codigo[tmp3]
-                            tmp3 += 1
-                        print(nombre)
-                        '''
                     elif buffer.lower()=="valores":
                         tipotoken="VALORES"
-                        '''
-                        valors = []
-                        tmp4 = i+3
-                        data = ''
-                        while codigo[tmp4] != "]":
-                            if codigo[tmp4] == "[":
-                                tmp24 = tmp4+1
-                                while codigo[tmp24] != ']':
-                                    data += codigo[tmp24]
-                                    tmp24 += 1
-                                d = data.split(',')
-                                valors.append(valorees(d[0].strip(), d[1].strip()))
-                                data = ''
-                            tmp4 += 1
-                            '''
                     elif buffer.lower()=="evento":
                         tipotoken="EVENTO"
-                        '''
-                        tmp5 = i+2
-                        while codigo[tmp5] != '\"':
-                            evento += codigo[tmp5]
-                            tmp5 += 1
-                        print(evento)
-                        '''
                     else: 
                         tipotoken="IDENTIFICADOR"
                     self.listaTokens.append(tokens(tipotoken,buffer, fila, columna))
@@ -220,20 +160,28 @@ class analizadorr:
                     columna+=1
                     estado=2
                     i+=1
-        #self.agregarlisthtml()
     
     def agregarlisthtml(self):
+        global tipo
+        global valor
+        global fondo
+        global evento
+        global nombre
+        global valoress
         componente= False
         i=0
-        toke=[]
         while i<len(self.listaTokens):
             if self.listaTokens[i].getLexema() == "<":
                 componente = True
             elif self.listaTokens[i].getLexema() == ">":
-                if componente == True:
-                    self.listaHtml(formulariohtml(tipo, valor ,fondo, valoress, evento,nombre))
                 componente = False
             else:
+                tipo=" "
+                fondo=" "
+                evento=" "
+                valor =" "
+                nombre=" "
+                valoress=[]
                 if self.listaTokens[i].getTipo() == "TIPO":
                     tipo=self.listaTokens[i+2].lexema
                     print(tipo)
@@ -244,15 +192,18 @@ class analizadorr:
                     fondo=self.listaTokens[i+2].lexema
                     print(fondo)
                 elif self.listaTokens[i].getTipo() == "VALORES":
-                    valoress=arreglo1
-                    print(valoress)
+                    while self.listaTokens[i].getLexema() != "]":
+                            if self.listaTokens[i].getLexema() !="[" and self.listaTokens[i].getLexema() != ":" and self.listaTokens[i].getLexema() != "," and self.listaTokens[i].getTipo() != "VALORES":
+                                valoress.append(valorees(self.listaTokens[i].getLexema())) 
+                            i+=1
                 elif self.listaTokens[i].getTipo() == "NOMBRE":
                     nombre=self.listaTokens[i+2].lexema
                     print(nombre)
                 elif self.listaTokens[i].getTipo() == "EVENTO":
-                    evento=self.listaTokens[i+2].lexema
+                    evento=self.listaTokens[i+2].lexema  
                     print(evento)
             i+=1
+        self.listaHtml.append(formulariohtml(tipo, valor ,fondo, valoress, evento,nombre))  
                 
     def imprimir(self):
         print("\n\n==========Lista tokens===============")
@@ -263,7 +214,7 @@ class analizadorr:
         for o in self.listaErrores:
             o.strError()
 
-        print("PROBANDO HTML")
+        print("\n\n==========Lista HTML===============")
         for u in self.listaHtml:
             u.__repr__()
 
@@ -370,7 +321,7 @@ class analizadorr:
         doc.write(bytes(texto1,"'utf-8'"))
         doc.close()
         webbrowser.open_new_tab('ReporteTokens.html')
-    '''
+    
     def CrearHtml(self):
         texto1 = """<!doctype html>
                 <html lang="en">
@@ -402,4 +353,3 @@ class analizadorr:
         doc.write(bytes(texto1,"'utf-8'"))
         doc.close()
         webbrowser.open_new_tab('Formulario.html')
-        '''

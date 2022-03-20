@@ -8,4 +8,9 @@ class formulariohtml:
         self.nombre = nombre
 
     def __repr__(self):
-        print(self.tipo+" "+self.valor+" "+self.fondo+" "+self.evento+" "+self.nombre)
+        print("\n=================================")
+        print("Tipo:"+self.tipo)
+        print("Valor:  "+self.valor)
+        print("Fondo:  "+self.fondo)
+        print("Evento: "+self.evento)
+        print("Nombre: "+self.nombre)
