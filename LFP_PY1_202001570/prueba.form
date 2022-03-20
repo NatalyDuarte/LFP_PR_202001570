@@ -1,11 +1,7 @@
 formulario ~>>[
     <
-        tipo:"etiqueta",
-        valor:"nombre"
-    >,
-    <
-        tipo:"texto",
-        valor:"nombre",
-        fondo:"Ingresar nombre"
+        tipo:"boton",
+        valor:"Valor",
+        evento: "entrada"
     >
 ]

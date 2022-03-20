@@ -320,45 +320,44 @@ class analizadorr:
         webbrowser.open_new_tab('ReporteTokens.html')
     
     def CrearHtml(self):
-        texto1 = """<!DOCTYPE html>
-                    <html lang="en">
-                    <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Login</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/materialize.min.css">
-    <link rel="stylesheet" href="css/tooplate.css">
-
-</head>
-
-<body id="login">
-    <div class="container">
-        <div class="row tm-register-row tm-mb-35">
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 tm-login-l">
-                <form action="" method="post" class="tm-bg-black p-5 h-100">
-                    <h1>UBlog-Registro de usuario</h1>"""
-        for f in range(0,len(self.listaHtml)):
-            if(self.listaHtml[f-1].tipo=="etiqueta"):
-                texto1 = texto1 + "<label>"+self.listaHtml[f-1].valor+"</label><br>&nbsp;"
-            elif(self.listaHtml[f-1].getNombre()!=" "):
-                texto1 = texto1 + "<label>"+self.listaHtml[f-1].getNombre() +": </label>&nbsp;"
-            elif(self.listaHtml[f-1].tipo=="texto"):
-                texto1 = texto1 + " <input type=\"text\" id=\""+self.listaHtml[f-1].valor+"\"placeholder=\""+self.listaHtml[f-1].fondo+"\"/><br>"
-            elif(self.listaHtml[f-1].tipo=="grupo-radio"):
+        texto1 = """<!doctype html>
+                <html lang="en">
+                <head>
+  	            <title>Formulario</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+                <meta charset="utf-8">
+                <meta name="html" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	            </head>
+                <body>
+                <div class="container">"""
+        for f in range(len(self.listaHtml)):
+            if(self.listaHtml[f].tipo=="etiqueta"):
+                texto1 = texto1 + "<label>"+self.listaHtml[f].valor+"</label><br>&nbsp;"
+            elif(self.listaHtml[f].tipo=="texto"):
+                texto1 = texto1 + " <input type=\"text\" id=\""+self.listaHtml[f].valor+"\"placeholder=\""+self.listaHtml[f].fondo+"\"/><br>"
+            elif(self.listaHtml[f].tipo=="grupo-radio"):
+                if(self.listaHtml[f].getNombre()!=" "):
+                    texto1 = texto1 + "<label>"+self.listaHtml[f].getNombre() +": </label>&nbsp;"
                 for u in range(0,len(valoress)):
-                    texto1 = texto1 + "<input type=\"radio\"  value=\""+self.listaHtml[f-1].valor+"\">"+valoress[u-1].valor+"&nbsp;"
-            elif(self.listaHtml[f-1].tipo=="grupo-option"):
+                    texto1 = texto1 + """<div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value=\""""+self.listaHtml[f].valor+"""\">
+                                            <label class="form-check-label" for="inlineRadio1">"""+valoress[u-1].valor+"""</label>
+                                        </div>"""
+            elif(self.listaHtml[f].tipo=="grupo-option"):
                 for o in range(0,len(valoress)):
-                    texto1 = texto1 + "<select name=\"select\"><option>"+valoress[o-1].valor+"</option></select><br>"
-            elif(self.listaHtml[f-1].tipo=="boton"):
-                texto1 = texto1 + "<input type=\"button\"  value=\""+self.listaHtml[f-1].valor+"\"placeholder=\""+self.listaHtml[f-1].fondo+"\"/><br>"
-                if(self.listaHtml[f-1].evento=="entrada"):
-                    texto1 = texto1 + "<iframe width=\"500px\" height=\"500px\">"
-        
-        texto1= texto1+"""</body>
+                  texto1 = texto1 + """<select name=\"select\">
+                  <option>"""+valoress[o-1].valor+"""</option>
+                  </select>"""
+            elif(self.listaHtml[f].tipo=="boton"):
+                #texto1 = texto1 +"<button type=\"button\" class=\"btn btn-info\"  value=\""+self.listaHtml[f].valor+"\">"+self.listaHtml[f].fondo+"</button>"
+                if(self.listaHtml[f].evento=="entrada"):
+                    texto1 = texto1 + "<input type=\"button\"  value=\""+self.listaHtml[f].valor+"\"placeholder=\""+self.listaHtml[f].fondo+"\"onclick=\"Evaluar()\"/><br>"
+                elif(self.listaHtml[f].evento=="entrada"):
+                    texto1 = texto1 + "<input type=\"button\"  value=\""+self.listaHtml[f].valor+"\"placeholder=\""+self.listaHtml[f].fondo+"\"onclick=\"Evaluar1()\"/><br>"
+                else:
+                    entrada=" "
+                    info=" "
+        texto1= texto1+"""</div></body>
                          </html>
                         """
         doc = open('Formulario.html','wb')

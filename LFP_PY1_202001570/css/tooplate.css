@@ -128,7 +128,7 @@ ul.tm-home-list:not(.browser-default) {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 50% 30%;
-  color: black;
+  color: rgb(27, 164, 182);
 }
 #modific {
   padding-top: 180px;
