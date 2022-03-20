@@ -168,42 +168,39 @@ class analizadorr:
         global evento
         global nombre
         global valoress
+        tipo=" "
+        fondo=" "
+        evento=" "
+        valor =" "
+        nombre=" "
+        valoress=[]
         componente= False
         i=0
         while i<len(self.listaTokens):
-            if self.listaTokens[i].getLexema() == "<":
+            if self.listaTokens[i].getTipo() == "Signo_menor":
                 componente = True
-            elif self.listaTokens[i].getLexema() == ">":
-                componente = False
-            else:
-                tipo=" "
-                fondo=" "
-                evento=" "
-                valor =" "
-                nombre=" "
-                valoress=[]
-                if self.listaTokens[i].getTipo() == "TIPO":
+            elif self.listaTokens[i].getTipo() == "TIPO":
                     tipo=self.listaTokens[i+2].lexema
-                    print(tipo)
-                elif self.listaTokens[i].getTipo() == "VALOR":
+            elif self.listaTokens[i].getTipo() == "VALOR":
                     valor=self.listaTokens[i+2].lexema
-                    print(valor)
-                elif self.listaTokens[i].getTipo() == "FONDO":
+            elif self.listaTokens[i].getTipo() == "FONDO":
                     fondo=self.listaTokens[i+2].lexema
-                    print(fondo)
-                elif self.listaTokens[i].getTipo() == "VALORES":
+            elif self.listaTokens[i].getTipo() == "VALORES":
                     while self.listaTokens[i].getLexema() != "]":
                             if self.listaTokens[i].getLexema() !="[" and self.listaTokens[i].getLexema() != ":" and self.listaTokens[i].getLexema() != "," and self.listaTokens[i].getTipo() != "VALORES":
                                 valoress.append(valorees(self.listaTokens[i].getLexema())) 
                             i+=1
-                elif self.listaTokens[i].getTipo() == "NOMBRE":
-                    nombre=self.listaTokens[i+2].lexema
-                    print(nombre)
-                elif self.listaTokens[i].getTipo() == "EVENTO":
-                    evento=self.listaTokens[i+2].lexema  
-                    print(evento)
+            elif self.listaTokens[i].getTipo() == "NOMBRE":
+                nombre=self.listaTokens[i+2].lexema
+            elif self.listaTokens[i].getTipo() == "EVENTO":
+                evento=self.listaTokens[i+2].lexema 
+            elif self.listaTokens[i].getTipo() == "Signo_mayor":
+                if componente == True:
+                    self.listaHtml.append(formulariohtml(tipo, valor ,fondo, valoress, evento,nombre))
+                componente= False
             i+=1
-        self.listaHtml.append(formulariohtml(tipo, valor ,fondo, valoress, evento,nombre))  
+        
+        
                 
     def imprimir(self):
         print("\n\n==========Lista tokens===============")
@@ -323,29 +320,44 @@ class analizadorr:
         webbrowser.open_new_tab('ReporteTokens.html')
     
     def CrearHtml(self):
-        texto1 = """<!doctype html>
-                <html lang="en">
-                <head>
-  	            <title>Formulario</title>
-                <meta charset="utf-8">
-                <meta name="html" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	            </head>
-                <body>"""
+        texto1 = """<!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/materialize.min.css">
+    <link rel="stylesheet" href="css/tooplate.css">
+
+</head>
+
+<body id="login">
+    <div class="container">
+        <div class="row tm-register-row tm-mb-35">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 tm-login-l">
+                <form action="" method="post" class="tm-bg-black p-5 h-100">
+                    <h1>UBlog-Registro de usuario</h1>"""
         for f in range(0,len(self.listaHtml)):
             if(self.listaHtml[f-1].tipo=="etiqueta"):
-                texto1 = texto1 + "<label>"+self.listaHtml[f-1].valor+"</label><br>"
-            if(self.listaHtml[f-1].tipo=="texto"):
+                texto1 = texto1 + "<label>"+self.listaHtml[f-1].valor+"</label><br>&nbsp;"
+            elif(self.listaHtml[f-1].getNombre()!=" "):
+                texto1 = texto1 + "<label>"+self.listaHtml[f-1].getNombre() +": </label>&nbsp;"
+            elif(self.listaHtml[f-1].tipo=="texto"):
                 texto1 = texto1 + " <input type=\"text\" id=\""+self.listaHtml[f-1].valor+"\"placeholder=\""+self.listaHtml[f-1].fondo+"\"/><br>"
-            if(self.listaHtml[f-1].tipo=="grupo-radio"):
+            elif(self.listaHtml[f-1].tipo=="grupo-radio"):
                 for u in range(0,len(valoress)):
-                    texto1 = texto1 + "<input type=\"radio\"  value=\""+self.listaHtml[f-1].valor+"\">"+valoress[u-1].valor+"<br><br>"
-            if(self.listaHtml[f-1].tipo=="grupo-radio"):
+                    texto1 = texto1 + "<input type=\"radio\"  value=\""+self.listaHtml[f-1].valor+"\">"+valoress[u-1].valor+"&nbsp;"
+            elif(self.listaHtml[f-1].tipo=="grupo-option"):
                 for o in range(0,len(valoress)):
                     texto1 = texto1 + "<select name=\"select\"><option>"+valoress[o-1].valor+"</option></select><br>"
-            if(self.listaHtml[f-1].tipo=="boton"):
+            elif(self.listaHtml[f-1].tipo=="boton"):
                 texto1 = texto1 + "<input type=\"button\"  value=\""+self.listaHtml[f-1].valor+"\"placeholder=\""+self.listaHtml[f-1].fondo+"\"/><br>"
                 if(self.listaHtml[f-1].evento=="entrada"):
                     texto1 = texto1 + "<iframe width=\"500px\" height=\"500px\">"
+        
         texto1= texto1+"""</body>
                          </html>
                         """

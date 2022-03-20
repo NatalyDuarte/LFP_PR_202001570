@@ -29,7 +29,7 @@ class Ventana(QMainWindow):
         anali.analizar(archivo)
         anali.agregarlisthtml()
         anali.imprimir()
-        #anali.CrearHtml()
+        anali.CrearHtml()
 
     def lectura(self):
         global rutarecibida

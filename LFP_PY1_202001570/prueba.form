@@ -1,7 +1,11 @@
 formulario ~>>[
     <
-        tipo:"grupo-radio",
-        nombre:"sexo",
-        valores:['Masculino','Femenino']
+        tipo:"etiqueta",
+        valor:"nombre"
+    >,
+    <
+        tipo:"texto",
+        valor:"nombre",
+        fondo:"Ingresar nombre"
     >
 ]
