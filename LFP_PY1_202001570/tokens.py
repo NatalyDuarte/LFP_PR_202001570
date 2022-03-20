@@ -5,6 +5,13 @@ class tokens:
         self.fila = fila
         self.columna = columna-len(lexema)
 
+    def getTipo (self):
+        return self.tipo
+
+    def getLexema (self):
+        return self.lexema
+    
+
     def strToken(self):
         print("\n=================================")
         print("Tipo:" +self.tipo)

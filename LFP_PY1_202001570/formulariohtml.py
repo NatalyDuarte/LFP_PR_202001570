@@ -1,4 +1,4 @@
-class html:
+class formulariohtml:
     def __init__(self, tipo, valor ,fondo, listavalores, evento,nombre):
         self.tipo=tipo
         self.valor=valor

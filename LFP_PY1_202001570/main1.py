@@ -8,12 +8,14 @@ from tkinter import filedialog
 import webbrowser
 from tokens import tokens
 from error import error
-from analizador1 import analizador1
+from analizadorr import analizadorr
 
 class Ventana(QMainWindow):
     def __init__(self):
         super().__init__()
         loadUi("ventana.ui", self)
+        global anali
+        anali= analizadorr()
         self.pushButton.clicked.connect(self.lectura)
         self.pushButton_2.clicked.connect(self.item)
         self.pushButton_3.clicked.connect(self.analizardoc)
@@ -23,11 +25,10 @@ class Ventana(QMainWindow):
         sys.exit(1)
 
     def analizardoc(self):
-        global anali
-        anali= analizador1()
         archivo = self.plainTextEdit.toPlainText()
         anali.analizar(archivo)
         anali.imprimir()
+        anali.agregarlisthtml()
         #anali.CrearHtml()
 
     def lectura(self):

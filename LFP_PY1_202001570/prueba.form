@@ -1,6 +1,7 @@
 formulario ~>>[
     <
-        tipo:"etiqueta",
-        valor:"nombre"
+        tipo:"grupo-radio",
+        nombre:"sexo",
+        valores:['Masculino','Femenino']
     >
 ]
