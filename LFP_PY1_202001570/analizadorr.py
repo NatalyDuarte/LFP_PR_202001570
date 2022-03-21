@@ -346,19 +346,21 @@ class analizadorr:
                                             <label id=\"etiradio\"class="form-check-label" for="inlineRadio1">"""+valoress[u-1].valor+"""</label>
                                         </div>"""
             elif(self.listaHtml[f].tipo=="grupo-option"):
+                if(self.listaHtml[f].getNombre()!=" "):
+                    texto1 = texto1 + "<br><label id=\"nombre\">"+self.listaHtml[f].getNombre() +": </label>&nbsp;"
+                texto1 = texto1 + "<select id=\"select\" name=\"select\">"
                 for o in range(0,len(valoress)):
-                  texto1 = texto1 + """<select name=\"select\">
-                  <option>"""+valoress[o-1].valor+"""</option>
-                  </select>"""
+                    texto1 = texto1 + "<option>"+valoress[o-1].valor+"</option>"
+                texto1 = texto1 + "</select>"
             elif(self.listaHtml[f].tipo=="boton"):
-                #texto1 = texto1 +"<button type=\"button\" class=\"btn btn-info\"  value=\""+self.listaHtml[f].valor+"\">"+self.listaHtml[f].fondo+"</button>"
                 if(self.listaHtml[f].evento=="entrada"):
-                    texto1 = texto1 + "<input type=\"button\"  value=\""+self.listaHtml[f].valor+"\"placeholder=\""+self.listaHtml[f].fondo+"\"onclick=\"Evaluar()\"/><br>"
+                    texto1 = texto1 + "<br><input type=\"button\"  value=\""+self.listaHtml[f].valor+"\"placeholder=\""+self.listaHtml[f].fondo+"\"onclick=\"Evaluar()\"/><br>"
                     texto1 = texto1 + "<textarea class=\"form-control\" cols=\"100\" rows=\"10\" id=\"area1\" hidden>"+cod+"</textarea>"
                 elif(self.listaHtml[f].evento=="info"):
-                    texto1 = texto1 + "<input type=\"button\"  value=\""+self.listaHtml[f].valor+"\"placeholder=\""+self.listaHtml[f].fondo+"\"onclick=\"Evaluar1()\"/><br>"
-                    texto1 = texto1 + "<textarea class=\"form-control\" cols=\"100\" rows=\"10\" id=\"area2\" hidden>"+cod+"</textarea>"
-                    #texto1 = texto1 + "<label for="floatingTextarea">Comments</label>"
+                    texto1 = texto1 + "<br><input type=\"button\"  value=\""+self.listaHtml[f].valor+"\"placeholder=\""+self.listaHtml[f].fondo+"\"onclick=\"Evaluar1()\"/><br>"
+                    texto1 = texto1 + "<textarea class=\"form-control\" cols=\"100\" rows=\"10\" id=\"area2\" hidden></textarea>"
+                    texto1 = texto1 +"<label id=\"txarea2\" for=\"area2\"></label>"
+
         texto1= texto1+"""</div>
                         <script src="js/funciones.js"></script>
                         </body>

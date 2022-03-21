@@ -7,12 +7,45 @@
                 <meta name="html" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	            </head>
                 <body>
-                <div class="container"><input type="button"  value="Valor"placeholder=" "onclick="Evaluar1()"/><br><textarea class="form-control" cols="100" rows="10" id="area2" hidden>formulario ~>>[
-   
+                <div class="container"><label id="etiqueta"> nombre</label><br>&nbsp; <input type="text" id="texto"placeholder="Ingresar nombre"/><br><label id="nombre">sexo: </label>&nbsp;<div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="nombre">
+                                            <label id="etiradio"class="form-check-label" for="inlineRadio1">Honduras</label>
+                                        </div><div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="nombre">
+                                            <label id="etiradio"class="form-check-label" for="inlineRadio1">Masculino</label>
+                                        </div><div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="nombre">
+                                            <label id="etiradio"class="form-check-label" for="inlineRadio1">Femenino</label>
+                                        </div><div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="nombre">
+                                            <label id="etiradio"class="form-check-label" for="inlineRadio1">Guatemala</label>
+                                        </div><div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="nombre">
+                                            <label id="etiradio"class="form-check-label" for="inlineRadio1">El Salvador</label>
+                                        </div><br><label id="nombre">pais: </label>&nbsp;<select id="select" name="select"><option>Honduras</option><option>Masculino</option><option>Femenino</option><option>Guatemala</option><option>El Salvador</option></select><br><input type="button"  value="Valor"placeholder="Ingresar nombre"onclick="Evaluar()"/><br><textarea class="form-control" cols="100" rows="10" id="area1" hidden>formulario ~>>[
+    <
+        tipo:"etiqueta",
+        valor:"nombre"
+    >,
+    <
+        tipo:"texto",
+        valor:"nombre",
+        fondo:"Ingresar nombre"
+    >,
+    <
+        tipo:"grupo-radio",
+        nombre:"sexo",
+        valores:['Masculino','Femenino']
+    >,
+    <
+        tipo:"grupo-option",
+        nombre:"pais",
+        valores:['Guatemala','El Salvador','Honduras']
+    >,
     <
         tipo:"boton",
         valor:"Valor",
-        evento: "info"
+        evento: "entrada"
     >
 ]</textarea></div>
                         <script src="js/funciones.js"></script>

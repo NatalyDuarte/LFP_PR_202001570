@@ -1,5 +1,18 @@
 formulario ~>>[
-   
+    <
+        tipo:"etiqueta",
+        valor:"nombre"
+    >,
+    <
+        tipo:"texto",
+        valor:"nombre",
+        fondo:"Ingresar nombre"
+    >,
+    <
+        tipo:"grupo-option",
+        nombre:"pais",
+        valores:['Guatemala','El Salvador','Honduras']
+    >,
     <
         tipo:"boton",
         valor:"Valor",
