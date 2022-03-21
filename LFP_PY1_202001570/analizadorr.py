@@ -12,6 +12,8 @@ class analizadorr:
         self.listaHtml = []
 
     def analizar(self, codigo):
+        global cod
+        cod= codigo
         self.listaTokens = []
         self.listaErrores = []
         self.listaHtml = []
@@ -332,16 +334,16 @@ class analizadorr:
                 <div class="container">"""
         for f in range(len(self.listaHtml)):
             if(self.listaHtml[f].tipo=="etiqueta"):
-                texto1 = texto1 + "<label>"+self.listaHtml[f].valor+"</label><br>&nbsp;"
+                texto1 = texto1 + "<label id=\"etiqueta\"> "+self.listaHtml[f].valor+"</label><br>&nbsp;"
             elif(self.listaHtml[f].tipo=="texto"):
-                texto1 = texto1 + " <input type=\"text\" id=\""+self.listaHtml[f].valor+"\"placeholder=\""+self.listaHtml[f].fondo+"\"/><br>"
+                texto1 = texto1 + " <input type=\"text\" id=\"texto\"placeholder=\""+self.listaHtml[f].fondo+"\"/><br>"
             elif(self.listaHtml[f].tipo=="grupo-radio"):
                 if(self.listaHtml[f].getNombre()!=" "):
-                    texto1 = texto1 + "<label>"+self.listaHtml[f].getNombre() +": </label>&nbsp;"
+                    texto1 = texto1 + "<label id=\"nombre\">"+self.listaHtml[f].getNombre() +": </label>&nbsp;"
                 for u in range(0,len(valoress)):
                     texto1 = texto1 + """<div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value=\""""+self.listaHtml[f].valor+"""\">
-                                            <label class="form-check-label" for="inlineRadio1">"""+valoress[u-1].valor+"""</label>
+                                            <label id=\"etiradio\"class="form-check-label" for="inlineRadio1">"""+valoress[u-1].valor+"""</label>
                                         </div>"""
             elif(self.listaHtml[f].tipo=="grupo-option"):
                 for o in range(0,len(valoress)):
@@ -352,10 +354,14 @@ class analizadorr:
                 #texto1 = texto1 +"<button type=\"button\" class=\"btn btn-info\"  value=\""+self.listaHtml[f].valor+"\">"+self.listaHtml[f].fondo+"</button>"
                 if(self.listaHtml[f].evento=="entrada"):
                     texto1 = texto1 + "<input type=\"button\"  value=\""+self.listaHtml[f].valor+"\"placeholder=\""+self.listaHtml[f].fondo+"\"onclick=\"Evaluar()\"/><br>"
-                elif(self.listaHtml[f].evento=="entrada"):
+                    texto1 = texto1 + "<textarea class=\"form-control\" cols=\"100\" rows=\"10\" id=\"area1\" hidden>"+cod+"</textarea>"
+                elif(self.listaHtml[f].evento=="info"):
                     texto1 = texto1 + "<input type=\"button\"  value=\""+self.listaHtml[f].valor+"\"placeholder=\""+self.listaHtml[f].fondo+"\"onclick=\"Evaluar1()\"/><br>"
-                
-        texto1= texto1+"""</div></body>
+                    texto1 = texto1 + "<textarea class=\"form-control\" cols=\"100\" rows=\"10\" id=\"area2\" hidden>"+cod+"</textarea>"
+                    #texto1 = texto1 + "<label for="floatingTextarea">Comments</label>"
+        texto1= texto1+"""</div>
+                        <script src="js/funciones.js"></script>
+                        </body>
                          </html>
                         """
         doc = open('Formulario.html','wb')
