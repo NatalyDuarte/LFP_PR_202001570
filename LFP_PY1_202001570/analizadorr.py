@@ -354,9 +354,7 @@ class analizadorr:
                     texto1 = texto1 + "<input type=\"button\"  value=\""+self.listaHtml[f].valor+"\"placeholder=\""+self.listaHtml[f].fondo+"\"onclick=\"Evaluar()\"/><br>"
                 elif(self.listaHtml[f].evento=="entrada"):
                     texto1 = texto1 + "<input type=\"button\"  value=\""+self.listaHtml[f].valor+"\"placeholder=\""+self.listaHtml[f].fondo+"\"onclick=\"Evaluar1()\"/><br>"
-                else:
-                    entrada=" "
-                    info=" "
+                
         texto1= texto1+"""</div></body>
                          </html>
                         """
