@@ -25,12 +25,17 @@ class Ventana(QMainWindow):
             }
             partidos_arre.append(p)
         partidos_arre.pop(0)
+        self.pushButton.clicked.connect(self.send)
 
     def lectura(self,ruta):
         archi=open(ruta, 'r')
         conte=archi.read()
         archi.close()
         return conte
+
+    def send(self):
+        self.textEdit.append('\n'+'you: '+self.lineEdit.text())
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     GUI = Ventana()
