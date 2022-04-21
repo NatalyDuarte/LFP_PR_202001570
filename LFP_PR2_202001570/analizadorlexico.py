@@ -1,7 +1,7 @@
 from tokens import tokens
 from error import error
 import re
-class analizadorr:
+class analizadorlexico:
     def __init__(self):
         self.listaTokens = []
         self.listaErrores = []
@@ -27,7 +27,10 @@ class analizadorr:
         # AUTOMATA
         i = 0
         while i < len(codigo):
+            print(i)
             cade= codigo[i]
+            print(cade)
+            
             #ESTADO 0
             if estado == 0:
                 #Signos/Simbolos
@@ -68,6 +71,7 @@ class analizadorr:
                     i+=1
                 #letras/palabras reservadas
                 elif re.search('[a-zA-Z]',cade):
+                    print("llego")
                     columna+=1
                     buffer+= cade
                     estado=1
@@ -96,11 +100,13 @@ class analizadorr:
                     estado=4
                     i+=1
                 #instruccion
+                    '''
                 elif re.search('[\w\s,\.]+',cade):
                     columna+=1
                     buffer+= cade
                     estado=5
                     i+=1
+                    '''
                 elif cade == '\n':
                     fila+=1
                     columna=1
@@ -109,6 +115,9 @@ class analizadorr:
                     columna+=1
                     i+=1
                 elif cade=='-':
+                    columna +=1
+                    i+=1
+                elif cade==':':
                     columna +=1
                     i+=1
                 #validacion del centinela
@@ -166,11 +175,17 @@ class analizadorr:
                         tipotoken="-n"
                     elif buffer=="-jf":
                         tipotoken="-jf"
+                    elif buffer=="you":
+                        pass
+                    elif buffer=="ou":
+                        pass
                     else: 
                         tipotoken="IDENTIFICADOR"
                     self.listaTokens.append(tokens(tipotoken,buffer, fila, columna))
                     buffer = ''
                     estado=0  
+            #i+=1
+            '''
             #Cadenas                 
             elif estado == 2:
                 if cade == '"':
@@ -210,7 +225,7 @@ class analizadorr:
                     columna+=1
                     estado=4
                     i+=1
-                
+        '''
     
         
         
@@ -223,7 +238,3 @@ class analizadorr:
         print("\n\n==========Lista errores===============")
         for o in self.listaErrores:
             o.strError()
-
-        print("\n\n==========Lista HTML===============")
-        for u in self.listaHtml:
-            u.__repr__()
