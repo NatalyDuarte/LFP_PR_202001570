@@ -32,6 +32,7 @@ class Ventana(QMainWindow):
         self.pushButton_4.clicked.connect(self.anali)
         self.pushButton_3.clicked.connect(self.borrarerro)
         self.pushButton_5.clicked.connect(self.borrartoke)
+        self.pushButton_2.clicked.connect(self.reporerrores)
 
     def lectura(self,ruta):
         archi=open(ruta, 'r')
@@ -46,12 +47,16 @@ class Ventana(QMainWindow):
         archivo = self.textEdit.toPlainText()
         anali.analizar(archivo)
         anali.imprimir()
+        anali.HTMLTOKENS()
     
     def borrarerro(self):
         anali.limpiarerrores()
 
     def borrartoke(self):
         anali.limpiartokens()
+    
+    def reporerrores(self):
+        anali.HTMLERRORES()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
