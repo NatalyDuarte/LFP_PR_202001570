@@ -10,7 +10,7 @@ class analizadorlexico:
     def limpiartokens(self):
         self.listaTokens = []
 
-    def limpiartokens(self):
+    def limpiarerrores(self):
         self.listaErrores = []
 
     def analizar(self, codigo):
@@ -27,41 +27,32 @@ class analizadorlexico:
         # AUTOMATA
         i = 0
         while i < len(codigo):
-            print(i)
             cade= codigo[i]
-            print(cade)
-            
             #ESTADO 0
             if estado == 0:
                 #Signos/Simbolos
+                if cade == "[":
+                    columna+=1
+                    buffer+=cade
+                    self.listaTokens.append(tokens('Corchete_Abrir',buffer, fila, columna))
+                    buffer=""
+                    estado=0
+                    i+=1               
                 if cade == ">":
                     columna+=1
                     buffer+=cade
                     self.listaTokens.append(tokens('Signo_mayor',buffer, fila, columna))
                     buffer=""
                     estado=0
-                    i+=1
-                elif cade == "[":
-                    columna+=1
-                    buffer+=cade
-                    self.listaTokens.append(tokens('Corchete_Abrir',buffer, fila, columna))
-                    buffer=""
-                    estado=0
-                    i+=1
+                    i+=1      
                 elif cade == "<":
                     columna+=1
                     buffer+=cade
                     self.listaTokens.append(tokens('Signo_menor',buffer, fila, columna))
                     buffer=""
                     estado=0
-                    i+=1
-                elif cade == "-":
-                    columna+=1
-                    buffer+=cade
-                    self.listaTokens.append(tokens('Guion',buffer, fila, columna))
-                    buffer=""
-                    estado=0
-                    i+=1
+                    i+=1  
+                    
                 elif cade == "]":
                     columna+=1
                     buffer+= cade
@@ -70,13 +61,7 @@ class analizadorlexico:
                     estado=0
                     i+=1
                 #letras/palabras reservadas
-                elif re.search('[a-zA-Z]',cade):
-                    print("llego")
-                    columna+=1
-                    buffer+= cade
-                    estado=1
-                    i+=1
-                elif re.search('-[\w\s,\.]+',cade):
+                elif re.search('[A-Z]',cade):
                     columna+=1
                     buffer+= cade
                     estado=1
@@ -92,30 +77,24 @@ class analizadorlexico:
                     columna+=1
                     buffer+= cade
                     estado=3
-                    i+=1
-                #fechas 
-                elif re.search('\s*<[0-9-]+>',cade):
+                    i+=1                
+                #archivo
+                elif re.search('[A-Za-z0-9]',cade):
                     columna+=1
                     buffer+= cade
                     estado=4
                     i+=1
-                #instruccion
-                    '''
-                elif re.search('[\w\s,\.]+',cade):
-                    columna+=1
-                    buffer+= cade
-                    estado=5
-                    i+=1
-                    '''
                 elif cade == '\n':
                     fila+=1
                     columna=1
                     i+=1
                 elif cade == '\t' or cade == ' ':
                     columna+=1
-                    i+=1
+                    i+=1  
                 elif cade=='-':
-                    columna +=1
+                    columna+=1
+                    buffer+= cade
+                    estado=1
                     i+=1
                 elif cade==':':
                     columna +=1
@@ -131,7 +110,12 @@ class analizadorlexico:
                     i+=1
             #Palabras reservadas
             elif estado == 1:
-                if re.search('[a-zA-Z]',cade):
+                if re.search('[a-z]',cade):
+                    buffer+=cade
+                    columna+=1
+                    estado=1
+                    i+=1
+                elif re.search('[A-Z]',cade):
                     buffer+=cade
                     columna+=1
                     estado=1
@@ -175,17 +159,16 @@ class analizadorlexico:
                         tipotoken="-n"
                     elif buffer=="-jf":
                         tipotoken="-jf"
-                    elif buffer=="you":
-                        pass
-                    elif buffer=="ou":
-                        pass
-                    else: 
+                    elif buffer=="-":
+                        tipotoken="Guion"
+                    elif buffer=="YOU":
                         tipotoken="IDENTIFICADOR"
+                    else: 
+                        estado=5
                     self.listaTokens.append(tokens(tipotoken,buffer, fila, columna))
                     buffer = ''
                     estado=0  
-            #i+=1
-            '''
+            
             #Cadenas                 
             elif estado == 2:
                 if cade == '"':
@@ -202,30 +185,35 @@ class analizadorlexico:
             #Numeros
             elif estado == 3:
                 if re.search('[0-9]',cade):
-                    buffer = buffer.replace("\"","")
-                    self.listaTokens.append(tokens('Número',buffer, fila, columna))
-                    estado=0
-                    buffer=''
-                    i+=1
-                else:
                     buffer+=cade
                     columna+=1
                     estado=3
-                    i+=1
-            #Fechas
-            elif estado == 4:
-                if re.search('\s*<[0-9-]+>',cade):
-                    buffer = buffer.replace("\"","")
-                    self.listaTokens.append(tokens('Fecha',buffer, fila, columna))
-                    estado=0
-                    buffer=''
-                    i+=1
+                    i+=1 
                 else:
+                    if re.search(r'\d\d\d\d',buffer):
+                        self.listaTokens.append(tokens('Fecha',buffer, fila, columna))
+                    elif re.search(r'\d\d',buffer):
+                        self.listaTokens.append(tokens('Número',buffer, fila, columna))
+                    elif re.search(r'\d',buffer):
+                        self.listaTokens.append(tokens('Número',buffer, fila, columna))
+                    else:
+                        self.listaTokens.append(tokens('Número',buffer, fila, columna))                  
+                    buffer=''
+                    estado=0
+            #Instruccion
+            elif estado == 4:
+                if re.search('[A-Za-z0-9]',cade):
                     buffer+=cade
                     columna+=1
                     estado=4
+                    i+=1 
+                else:
+                    self.listaTokens.append(tokens('Archivo',buffer, fila, columna))
+                    estado=0
+                    buffer=''
                     i+=1
-        '''
+                    
+        
     
         
         

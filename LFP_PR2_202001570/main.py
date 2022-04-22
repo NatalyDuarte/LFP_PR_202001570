@@ -30,6 +30,8 @@ class Ventana(QMainWindow):
         partidos_arre.pop(0)
         self.pushButton.clicked.connect(self.send)
         self.pushButton_4.clicked.connect(self.anali)
+        self.pushButton_3.clicked.connect(self.borrarerro)
+        self.pushButton_5.clicked.connect(self.borrartoke)
 
     def lectura(self,ruta):
         archi=open(ruta, 'r')
@@ -38,12 +40,18 @@ class Ventana(QMainWindow):
         return conte
 
     def send(self):
-        self.textEdit.append('\n'+'you: '+self.lineEdit.text())
+        self.textEdit.append('\n'+'YOU: '+self.lineEdit.text())
 
     def anali(self):
         archivo = self.textEdit.toPlainText()
         anali.analizar(archivo)
         anali.imprimir()
+    
+    def borrarerro(self):
+        anali.limpiarerrores()
+
+    def borrartoke(self):
+        anali.limpiartokens()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
