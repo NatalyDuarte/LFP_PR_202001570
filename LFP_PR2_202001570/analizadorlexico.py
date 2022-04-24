@@ -52,8 +52,7 @@ class analizadorlexico:
                     self.listaTokens.append(tokens('Signo_menor',buffer, fila, columna))
                     buffer=""
                     estado=0
-                    i+=1  
-                    
+                    i+=1                     
                 elif cade == "]":
                     columna+=1
                     buffer+= cade
@@ -89,7 +88,7 @@ class analizadorlexico:
                     fila+=1
                     columna=1
                     i+=1
-                elif cade == '\t' or cade == ' ':
+                elif cade == '\t' or cade == ' 'or cade == '\r':
                     columna+=1
                     i+=1  
                 elif cade=='-':
@@ -140,6 +139,8 @@ class analizadorlexico:
                         tipotoken="VISITANTE"
                     elif buffer=="TOTAL":
                         tipotoken="TOTAL"
+                    elif buffer=="TABLA":
+                        tipotoken="TABLA"
                     elif buffer=="TABLA TEMPORADA":
                         tipotoken="TABLA TEMPORADA"
                     elif buffer=="PARTIDOS":
@@ -169,7 +170,6 @@ class analizadorlexico:
                     self.listaTokens.append(tokens(tipotoken,buffer, fila, columna))
                     buffer = ''
                     estado=0  
-            
             #Cadenas                 
             elif estado == 2:
                 if cade == '"':

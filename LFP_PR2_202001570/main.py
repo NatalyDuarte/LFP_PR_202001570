@@ -41,12 +41,12 @@ class Ventana(QMainWindow):
         return conte
 
     def send(self):
-        self.textEdit.append('\n'+'YOU: '+self.lineEdit.text())
-
-    def anali(self):
-        archivo = self.textEdit.toPlainText()
+        archivo = self.lineEdit.text()
         anali.analizar(archivo)
         anali.imprimir()
+        self.textEdit.append('\n'+'YOU: '+archivo)
+
+    def anali(self):
         anali.HTMLTOKENS()
     
     def borrarerro(self):
