@@ -3,7 +3,10 @@ class error:
         self.tipo = tipo
         self.descripcion = descripcion
         self.fila = fila
-        self.columna = columna-len(descripcion)
+        self.columna = columna
+    
+    def getTipo (self):
+        return self.tipo
 
     def strError(self):
         print("\n=================================")

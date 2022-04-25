@@ -3,7 +3,7 @@ class tokens:
         self.tipo = tipo
         self.lexema = lexema
         self.fila = fila
-        self.columna = columna-len(lexema)
+        self.columna = columna-1
 
     def getTipo (self):
         return self.tipo

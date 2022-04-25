@@ -4,15 +4,23 @@ from PyQt5.uic import loadUi
 import sys
 from PyQt5.QtGui import QPixmap
 from analizadorlexico import analizadorlexico
-
+from analizadorsintactico import analizadorsintactico
+from tokens import tokens
+from error import error
+import webbrowser
+from tkinter import messagebox
 class Ventana(QMainWindow):
     global partidos_arre
     partidos_arre=[]
     def __init__(self):
+        self.listaTokens = []
+        self.listaErrores = []
+        self.i=0
         super().__init__()
         loadUi("princi.ui", self)
-        global anali
+        global anali, analisin
         anali= analizadorlexico()
+        analisin = analizadorsintactico()
         archivo=self.lectura("LaLigaBot-LFP.csv")
         partidos= archivo.split("\n")
         for partid in partidos:
@@ -42,21 +50,145 @@ class Ventana(QMainWindow):
 
     def send(self):
         archivo = self.lineEdit.text()
-        anali.analizar(archivo)
-        anali.imprimir()
-        self.textEdit.append('\n'+'YOU: '+archivo)
+        anali.analizar(archivo,self.listaTokens,self.listaErrores)
+        analisin.analizar(self.listaTokens, self.listaErrores)
+        if len(self.listaErrores)==0:
+            self.textEdit.append('\n'+'YOU: '+archivo)
+        else:
+            for o in range(len(self.listaErrores)):
+                if self.listaErrores[o].tipo!='Error Sintactico':
+                    self.textEdit.append('\n'+'YOU: '+archivo)
+                else:
+                    messagebox.showwarning("Alert","La sintaxis no es correcta")
+        self.imprimir()
+        
 
     def anali(self):
-        anali.HTMLTOKENS()
+        self.HTMLTOKENS()
     
     def borrarerro(self):
-        anali.limpiarerrores()
+        self.listaErrores = []
+        self.imprimir()
 
     def borrartoke(self):
-        anali.limpiartokens()
+        self.listaTokens = []
+        self.imprimir()
     
     def reporerrores(self):
-        anali.HTMLERRORES()
+        self.HTMLERRORES()
+    
+    def imprimir(self):
+        print("\n\n==========Lista tokens===============")
+        for i in self.listaTokens:
+            i.strToken()
+
+        print("\n\n==========Lista errores===============")
+        for o in self.listaErrores:
+            o.strError()
+
+    def HTMLERRORES(self):
+        texto1 = """<!doctype html>
+                <html lang="en">
+                <head>
+  	            <title>Reporte de Errores Lexicos</title>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+                <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	            <link rel="stylesheet" href="css/style.css">
+                <H1><font color="Olive" face="Comic Sans MS,arial">Nataly Saraí Guzmán Duarte 202001570</font></H1>
+	            </head>
+	            <body style="background-color:pink;">
+	                <section class="ftco-section">
+		            <div class="container">
+			            <div class="row justify-content-center">
+				            <div class="col-md-6 text-center mb-5">
+					            <h2 class="heading-section">Tabla de Errores</h2>
+				            </div>
+			            </div>
+			        <div class="row">
+				        <div class="col-md-12">
+					        <div class="table-wrap">
+						        <table class="table table-dark">
+						            <thead>
+						                <tr class="bg-dark">
+						                <th>Tipo de token</th>
+						                <th>Lexema</th>
+						                <th>Fila</th>
+						                <th>Columna</th>
+						                </tr>
+						            </thead>"""
+        for f in range(0,len(self.listaErrores)):
+            texto1 = texto1 + "<tr class=\"bg-primary\"><td><center>"+self.listaErrores[f-1].tipo+"</center></td><td><center>"+self.listaErrores[f-1].descripcion+"</center></td><td><center>"+str(self.listaErrores[f-1].fila)+"</center></td><td><center>"+str(self.listaErrores[f-1].columna)+"</center></td></tr>"
+        texto= """</tr>
+                 </tbody>
+				    </table>
+					</div>
+				</div>
+			</div>
+		</div>
+        """
+        conti="""</section>
+	            </body>
+            </html>
+            """
+        texto1=texto1+texto+conti
+        doc = open('ReporteErrorLex.html','wb')
+        doc.write(bytes(texto1,"'utf-8'"))
+        doc.close()
+        webbrowser.open_new_tab('ReporteErrorLex.html')
+
+    def HTMLTOKENS(self):
+        texto1 = """<!doctype html>
+                <html lang="en">
+                <head>
+  	            <title>Reporte de tokens</title>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+                <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	            <link rel="stylesheet" href="css/style.css">
+                <H1><font color="Olive" face="Comic Sans MS,arial">Nataly Saraí Guzmán Duarte 202001570</font></H1>
+	            </head>
+	            <body style="background-color:pink;">
+	                <section class="ftco-section">
+		            <div class="container">
+			            <div class="row justify-content-center">
+				            <div class="col-md-6 text-center mb-5">
+					            <h2 class="heading-section">Tabla de tokens</h2>
+				            </div>
+			            </div>
+			        <div class="row">
+				        <div class="col-md-12">
+					        <div class="table-wrap">
+						        <table class="table table-dark">
+						            <thead>
+						                <tr class="bg-dark">
+						                <th>Tipo</th>
+						                <th>Lexema</th>
+						                <th>Fila</th>
+						                <th>Columna</th>
+						                </tr>
+						            </thead>"""
+        for f in range(0,len(self.listaTokens)):
+            texto1 = texto1 + "<tr class=\"bg-primary\"><td><center>"+self.listaTokens[f-1].tipo+"</center></td><td><center>"+self.listaTokens[f-1].lexema+"</center></td><td><center>"+str(self.listaTokens[f-1].fila)+"</center></td><td><center>"+str(self.listaTokens[f-1].columna)+"</center></td></tr>"
+        texto= """</tr>
+                 </tbody>
+				    </table>
+					</div>
+				</div>
+			</div>
+		</div>
+        """
+        conti="""</section>
+	            </body>
+            </html>
+            """
+        texto1=texto1+texto+conti
+        doc = open('ReporteTokens.html','wb')
+        doc.write(bytes(texto1,"'utf-8'"))
+        doc.close()
+        webbrowser.open_new_tab('ReporteTokens.html')
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
