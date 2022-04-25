@@ -70,7 +70,7 @@ class analizadorlexico:
                     estado=3
                     i+=1                
                 #archivo
-                elif re.search('[A-Za-z0-9]',cade):
+                elif re.search('[A-Za-z0-9_]',cade):
                     columna+=1
                     buffer+= cade
                     estado=4
@@ -195,7 +195,7 @@ class analizadorlexico:
                     estado=0
             #Instruccion
             elif estado == 4:
-                if re.search('[A-Za-z0-9]',cade):
+                if re.search('[A-Za-z0-9_]',cade):
                     buffer+=cade
                     columna+=1
                     estado=4
