@@ -10,9 +10,9 @@ from error import error
 import webbrowser
 from tkinter import messagebox
 class Ventana(QMainWindow):
-    global partidos_arre
-    partidos_arre=[]
     def __init__(self):
+        self.resultado= []
+        self.partidos_arre=[]
         self.listaTokens = []
         self.listaErrores = []
         self.i=0
@@ -34,8 +34,8 @@ class Ventana(QMainWindow):
                 "Goles1":datos[5],
                 "Goles2":datos[6],
             }
-            partidos_arre.append(p)
-        partidos_arre.pop(0)
+            self.partidos_arre.append(p)
+        self.partidos_arre.pop(0)
         self.pushButton.clicked.connect(self.send)
         self.pushButton_4.clicked.connect(self.anali)
         self.pushButton_3.clicked.connect(self.borrarerro)
@@ -45,19 +45,21 @@ class Ventana(QMainWindow):
     def lectura(self,ruta):
         archi=open(ruta, 'r')
         conte=archi.read()
-        archi.close()
+        #archi.close()
         return conte
 
     def send(self):
         archivo = self.lineEdit.text()
         anali.analizar(archivo,self.listaTokens,self.listaErrores)
-        analisin.analizar(self.listaTokens, self.listaErrores)
+        analisin.analizar(self.listaTokens, self.listaErrores,self.partidos_arre,self.resultado)
         if len(self.listaErrores)==0:
             self.textEdit.append('\n'+'YOU: '+archivo)
+            self.textEdit.append('\n'+'BOT: '+str(self.resultado[0]))
         else:
             for o in range(len(self.listaErrores)):
                 if self.listaErrores[o].tipo!='Error Sintactico':
                     self.textEdit.append('\n'+'YOU: '+archivo)
+                    self.textEdit.append('\n'+'BOT: '+str(self.resultado[0]))
                 else:
                     messagebox.showwarning("Alert","La sintaxis no es correcta")
         self.imprimir()

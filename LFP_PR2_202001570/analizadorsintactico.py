@@ -7,11 +7,15 @@ class analizadorsintactico:
     def __init__(self):
         self.listaTokens = []
         self.listaErrores = []
+        self.listaPartidos = []
         self.i=0
+        self.resultado = []
 
-    def analizar(self, listaTokens, listaErrores):
+    def analizar(self, listaTokens, listaErrores, listaPartidos, resultado):
         self.listaTokens= listaTokens
         self.listaErrores= listaErrores
+        self.listaPartidos = listaPartidos
+        self.resultado = resultado
         self.inicio()
 
     def inicio(self):
@@ -88,7 +92,7 @@ class analizadorsintactico:
                                                 self.i += 1
                                                 token = self.listaTokens[self.i]        
                                                 if token.tipo == 'Signo_mayor':
-                                                    print("Todo correcto")
+                                                    self.buscarpartido(cadena,cadena1,primerano,segunano)                                                   
                                                 else:
                                                     #Se esperaba signo mayor
                                                     self.listaErrores.append(error('Error Sintactico', token.lexema, token.fila, token.columna))
@@ -373,7 +377,10 @@ class analizadorsintactico:
                                             if token.tipo == '-f':
                                                 docu=self.archivoopp1()
                                                 print(docu)
-                                                if len(self.listaTokens)>=11:
+                                                tempo="100"
+                                                print(tempo)
+                                                if len(self.listaTokens)>=12:
+                                                    print("llego aca")
                                                     self.i +=1
                                                     token=self.listaTokens[self.i]
                                                     if token.tipo == '-ji':
@@ -381,14 +388,15 @@ class analizadorsintactico:
                                                         print(tempo)
                                                     else: 
                                                         self.listaErrores.append(error('Error Sintactico', token.lexema, token.fila, token.columna))
-                                            else:
-                                                docu="partidos.html"
-                                                print(docu)
-                                            if token.tipo == '-ji':
+                                            elif token.tipo == '-ji':
                                                 tempo=self.archivop1()
                                                 print(tempo)
+                                                docu="partidos.html"
+                                                print(docu)
                                             else: 
+                                                docu="partidos.html"
                                                 tempo="100"
+                                                print(docu)
                                                 print(tempo)
                                         else:
                                             pass
@@ -545,3 +553,15 @@ class analizadorsintactico:
             print("Leido correctamente")
         else:
             self.listaErrores.append(error('Error Sintactico', token.lexema, token.fila, token.columna))
+
+    def buscarpartido(self, local, visitante, anioinicio, aniofin):
+        temporada = str(anioinicio) + '-' + str(aniofin)
+        for partido in self.listaPartidos:
+            if partido['Temporada'] == temporada:
+                if(partido['Equipo1'] == local and partido['Equipo2'] == visitante):
+                    self.resultado.append("El resultado de este partido fue: "+ partido['Equipo1']+" " +partido['Goles1']+'-'+partido['Equipo2']+" "+partido['Goles2'])                 
+                    print(self.resultado)
+                else:
+                    print('No existe resultado')
+            else:
+                print('No existe resultado')
