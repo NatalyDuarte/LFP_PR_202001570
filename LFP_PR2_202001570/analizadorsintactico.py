@@ -10,6 +10,8 @@ class analizadorsintactico:
         self.listaPartidos = []
         self.i=0
         self.resultado = []
+        self.Jornada = []
+        self.Parti = []
 
     def analizar(self, listaTokens, listaErrores, listaPartidos, resultado):
         self.listaTokens= listaTokens
@@ -156,6 +158,7 @@ class analizadorsintactico:
                                         print("Todo correcto")
                                         docu=self.archivoop()
                                         print(docu)
+                                        self.BuscJornada(numero,primerano,segunano,docu)
                                     else:
                                         #Se esperaba signo mayor
                                         self.listaErrores.append(error('Error Sintactico', token.lexema, token.fila, token.columna))
@@ -195,10 +198,10 @@ class analizadorsintactico:
                     #Se esperaba archivo
                     self.listaErrores.append(error('Error Sintactico', token.lexema, token.fila, token.columna))
             else:
-                archivo="jornada.html"
+                archivo="jornada"
                 return archivo
         else:
-            archivo="jornada.html"
+            archivo="jornada"
             return archivo
                 
     def totalgolestemporada(self):
@@ -210,6 +213,7 @@ class analizadorsintactico:
             condicion= self.condicion()
             token = self.listaTokens[self.i]
             if token.tipo == 'Cadena':
+                equipo= token.lexema
                 self.i += 1
                 token = self.listaTokens[self.i]
                 if token.tipo == 'TEMPORADA':
@@ -228,7 +232,8 @@ class analizadorsintactico:
                                 if token.tipo == 'Fecha':
                                     segunano= token.lexema                                    
                                     self.i += 1
-                                    token = self.listaTokens[self.i]        
+                                    token = self.listaTokens[self.i]  
+                                    self.Goles(condicion,equipo,primerano,segunano)      
                                     if token.tipo == 'Signo_mayor':
                                         print("Todo correcto")
                                     else:
@@ -300,6 +305,7 @@ class analizadorsintactico:
                                     print("Todo correcto")
                                     docu=self.archivoopp()
                                     print(docu)
+                                    self.Tabla(primerano,segunano,docu)
                                 else:
                                     #Se esperaba signo mayor
                                     self.listaErrores.append(error('Error Sintactico', token.lexema, token.fila, token.columna))
@@ -336,10 +342,10 @@ class analizadorsintactico:
                     #Se esperaba archivo
                     self.listaErrores.append(error('Error Sintactico', token.lexema, token.fila, token.columna))
             else:
-                archivo="temporada.html"
+                archivo="temporada"
                 return archivo
         else:
-            archivo="temporada.html"
+            archivo="temporada"
             return archivo
         
     def temporadaequipo(self):
@@ -350,6 +356,7 @@ class analizadorsintactico:
             self.i += 1
             token = self.listaTokens[self.i]
             if token.tipo == 'Cadena':
+                parti=token.lexema
                 self.i += 1
                 token = self.listaTokens[self.i]
                 if token.tipo == 'TEMPORADA':
@@ -377,10 +384,9 @@ class analizadorsintactico:
                                             if token.tipo == '-f':
                                                 docu=self.archivoopp1()
                                                 print(docu)
-                                                tempo="100"
+                                                tempo="No"
                                                 print(tempo)
                                                 if len(self.listaTokens)>=12:
-                                                    print("llego aca")
                                                     self.i +=1
                                                     token=self.listaTokens[self.i]
                                                     if token.tipo == '-ji':
@@ -391,13 +397,14 @@ class analizadorsintactico:
                                             elif token.tipo == '-ji':
                                                 tempo=self.archivop1()
                                                 print(tempo)
-                                                docu="partidos.html"
+                                                docu="partidos"
                                                 print(docu)
                                             else: 
-                                                docu="partidos.html"
-                                                tempo="100"
+                                                docu="partidos"
+                                                tempo="No"
                                                 print(docu)
                                                 print(tempo)
+                                            self.ObPartidos(parti,primerano,segunano,docu,tempo)
                                         else:
                                             pass
                                     else:
@@ -447,21 +454,21 @@ class analizadorsintactico:
                 token = self.listaTokens[self.i]
                 if token.tipo == 'Número':
                     num2= token.lexema
-                    return str(num1),str(num2)
+                    var=str(num1)+","+str(num2)
+                    return var
                 else:
                     #Se esperaba numero
                     self.listaErrores.append(error('Error Sintactico', token.lexema, token.fila, token.columna))
-                    return "100"
+                    return "No"
             else:
                 #Se esperaba -jf
                 self.listaErrores.append(error('Error Sintactico', token.lexema, token.fila, token.columna))
-                return "100"
+                return "No"
         else:
             #Se esperaba numero
             self.listaErrores.append(error('Error Sintactico', token.lexema, token.fila, token.columna))
-            return "100"
+            return "No"
             
-
     def topequipos(self):
         token = self.listaTokens[self.i]
         if len(self.listaTokens)<8:
@@ -491,6 +498,7 @@ class analizadorsintactico:
                                     print("Todo correcto")
                                     docu=self.archivop2()
                                     print(docu)
+                                    self.TOP(condicion,primerano,segunano,docu)
                                 else:
                                     #Se esperaba signo mayor
                                     self.listaErrores.append(error('Error Sintactico', token.lexema, token.fila, token.columna))
@@ -550,7 +558,7 @@ class analizadorsintactico:
         if len(self.listaTokens)<1:
             self.listaErrores.append(error('Error Sintactico', token.lexema, token.fila, token.columna))
         elif token.tipo == 'ADIOS':
-            print("Leido correctamente")
+            self.resultado.append("ADIOS")
         else:
             self.listaErrores.append(error('Error Sintactico', token.lexema, token.fila, token.columna))
 
@@ -560,8 +568,188 @@ class analizadorsintactico:
             if partido['Temporada'] == temporada:
                 if(partido['Equipo1'] == local and partido['Equipo2'] == visitante):
                     self.resultado.append("El resultado de este partido fue: "+ partido['Equipo1']+" " +partido['Goles1']+'-'+partido['Equipo2']+" "+partido['Goles2'])                 
-                    print(self.resultado)
                 else:
-                    print('No existe resultado')
+                    pass
             else:
-                print('No existe resultado')
+                pass
+    
+    def BuscJornada(self,numero,primerano,segunano,docu):
+        temporada = str(primerano) + '-' + str(segunano)
+        for partido in self.listaPartidos:
+            if partido['Temporada'] == temporada:
+                if partido['Jornada'] == numero:                   
+                    self.resultado.append("Generando archivo de resultados jornada "+partido['Jornada']+" temporada "+ partido['Temporada'])
+                    self.Jornada.append(partido)
+                else:
+                    pass
+            else:
+                pass
+        if len(self.Jornada)>0:
+            self.HTMLJORNADA(docu)
+
+    def ObPartidos(self,parti,primerano,segunano,docu,tempo):
+        temporada = str(primerano) + '-' + str(segunano)
+        for partido in self.listaPartidos:
+            if partido['Temporada'] == temporada:
+                if partido['Equipo1'] == parti or partido['Equipo2'] == parti:
+                    if tempo=="No":
+                        self.Parti.append(partido)
+                        self.resultado.append("Generando archivo de resultados de temporada "+partido['Temporada']+" del "+ parti)
+                    else:
+                        datos=tempo.split(",")
+                        if int(partido['Jornada'])>=int(datos[0]) and int(partido['Jornada'])<=int(datos[1]):
+                            self.Parti.append(partido)
+                            self.resultado.append("Generando archivo de resultados de temporada "+partido['Temporada']+" del "+ parti)
+                        else:
+                            print("Error")
+
+        if len(self.Parti)>0:
+            self.HTMLPARTI(docu)
+
+    def Goles(self,condicion,equipo,primerano,segunano):
+        global contador1
+        contador1=0
+        temporada = str(primerano) + '-' + str(segunano)
+        for partido in self.listaPartidos:
+            if partido['Temporada'] == temporada:
+                if condicion=="LOCAL":
+                    if partido['Equipo1'] == equipo:
+                        contador1 = contador1+int(partido['Goles1'])
+                    else:
+                        pass
+                elif condicion=="VISITANTE":
+                    if partido['Equipo2'] == equipo:
+                        contador1 = contador1+int(partido['Goles2'])
+                    else:
+                         pass
+                elif condicion=="TOTAL":
+                    if partido['Equipo1'] == equipo:
+                        contador1 = contador1+int(partido['Goles1'])
+                    else:
+                         pass
+                    if partido['Equipo2'] == equipo:
+                        contador1 = contador1+int(partido['Goles2'])
+                    else:
+                         pass
+                else: 
+                     pass
+            else: 
+                     pass
+        print(contador1)
+        self.resultado.append("Los goles anotados por el "+equipo+" en total en la temporada "+ temporada +" fueron "+str(contador1))
+    
+    def TOP(self,condicion,primerano,segunano,docu):
+        temporada = str(primerano) + '-' + str(segunano)
+        for partido in self.listaPartidos:
+            if partido['Temporada'] == temporada:
+                pass
+
+    def HTMLJORNADA(self,docu):
+        texto1 = """<!doctype html>
+                <html lang="en">
+                <head>
+  	            <title>Reporte de Jornadas</title>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+                <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	            <link rel="stylesheet" href="css/style.css">
+                <H1><font color="Olive" face="Comic Sans MS,arial">Nataly Saraí Guzmán Duarte 202001570</font></H1>
+	            </head>
+	            <body style="background-color:pink;">
+	                <section class="ftco-section">
+		            <div class="container">
+			            <div class="row justify-content-center">
+				            <div class="col-md-6 text-center mb-5">
+					            <h2 class="heading-section">Tabla de Partidos</h2>
+				            </div>
+			            </div>
+			        <div class="row">
+				        <div class="col-md-12">
+					        <div class="table-wrap">
+						        <table class="table table-dark">
+						            <thead>
+						                <tr class="bg-dark">
+						                <th>Fecha</th>
+						                <th>Temporada</th>
+						                <th>Jornada</th>
+						                <th>Equipo1</th>
+                                        <th>Equipo2</th>
+                                        <th>Goles1</th>
+                                        <th>Goles2</th>
+						                </tr>
+						            </thead>"""
+        for jornada in self.Jornada:
+            texto1 = texto1 + "<tr class=\"bg-primary\"><td><center>"+str(jornada['Fecha'])+"</center></td><td><center>"+str(jornada['Temporada'])+"</center></td><td><center>"+str(jornada['Jornada'])+"</center></td><td><center>"+str(jornada['Equipo1'])+"</center></td><td><center>"+str(jornada['Equipo2'])+"</center></td><td><center>"+str(jornada['Goles1'])+"</center></td><td><center>"+str(jornada['Goles2'])+"</center></td></tr>"
+        texto= """</tr>
+                 </tbody>
+				    </table>
+					</div>
+				</div>
+			</div>
+		</div>
+        """
+        conti="""</section>
+	            </body>
+            </html>
+            """
+        texto1=texto1+texto+conti
+        doc = open(docu+'.html','wb')
+        doc.write(bytes(texto1,"'utf-8'"))
+        doc.close()
+        webbrowser.open_new_tab(docu+'.html')
+
+    def HTMLPARTI(self,docu):
+        texto1 = """<!doctype html>
+                <html lang="en">
+                <head>
+  	            <title>Temporada de un equipo</title>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+                <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	            <link rel="stylesheet" href="css/style.css">
+                <H1><font color="Olive" face="Comic Sans MS,arial">Nataly Saraí Guzmán Duarte 202001570</font></H1>
+	            </head>
+	            <body style="background-color:pink;">
+	                <section class="ftco-section">
+		            <div class="container">
+			            <div class="row justify-content-center">
+				            <div class="col-md-6 text-center mb-5">
+					            <h2 class="heading-section">Temporada de un equipo</h2>
+				            </div>
+			            </div>
+			        <div class="row">
+				        <div class="col-md-12">
+					        <div class="table-wrap">
+						        <table class="table table-dark">
+						            <thead>
+						                <tr class="bg-dark">
+						                <th>Fecha</th>
+						                <th>Temporada</th>
+						                <th>Jornada</th>
+						                <th>Equipo1</th>
+                                        <th>Equipo2</th>
+                                        <th>Goles1</th>
+                                        <th>Goles2</th>
+						                </tr>
+						            </thead>"""
+        for jornada in self.Parti:
+            texto1 = texto1 + "<tr class=\"bg-primary\"><td><center>"+str(jornada['Fecha'])+"</center></td><td><center>"+str(jornada['Temporada'])+"</center></td><td><center>"+str(jornada['Jornada'])+"</center></td><td><center>"+str(jornada['Equipo1'])+"</center></td><td><center>"+str(jornada['Equipo2'])+"</center></td><td><center>"+str(jornada['Goles1'])+"</center></td><td><center>"+str(jornada['Goles2'])+"</center></td></tr>"
+        texto= """</tr>
+                 </tbody>
+				    </table>
+					</div>
+				</div>
+			</div>
+		</div>
+        """
+        conti="""</section>
+	            </body>
+            </html>
+            """
+        texto1=texto1+texto+conti
+        doc = open(docu+'.html','wb')
+        doc.write(bytes(texto1,"'utf-8'"))
+        doc.close()
+        webbrowser.open_new_tab(docu+'.html')

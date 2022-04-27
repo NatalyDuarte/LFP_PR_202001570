@@ -54,12 +54,18 @@ class Ventana(QMainWindow):
         analisin.analizar(self.listaTokens, self.listaErrores,self.partidos_arre,self.resultado)
         if len(self.listaErrores)==0:
             self.textEdit.append('\n'+'YOU: '+archivo)
-            self.textEdit.append('\n'+'BOT: '+str(self.resultado[0]))
+            if len(self.resultado)>0:
+                self.textEdit.append('\n'+'BOT: '+str(self.resultado[0]))
+            else:
+                self.textEdit.append('\n'+'BOT: No se encontraron resultados') 
         else:
             for o in range(len(self.listaErrores)):
                 if self.listaErrores[o].tipo!='Error Sintactico':
                     self.textEdit.append('\n'+'YOU: '+archivo)
-                    self.textEdit.append('\n'+'BOT: '+str(self.resultado[0]))
+                    if len(self.resultado)>0:
+                        self.textEdit.append('\n'+'BOT: '+str(self.resultado[0]))
+                    else:
+                        self.textEdit.append('\n'+'BOT: No se encontraron resultados')
                 else:
                     messagebox.showwarning("Alert","La sintaxis no es correcta")
         self.imprimir()
@@ -70,10 +76,12 @@ class Ventana(QMainWindow):
     
     def borrarerro(self):
         self.listaErrores = []
+        self.resultado = []
         self.imprimir()
 
     def borrartoke(self):
         self.listaTokens = []
+        self.resultado = []
         self.imprimir()
     
     def reporerrores(self):
