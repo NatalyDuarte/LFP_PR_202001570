@@ -3,6 +3,7 @@ from error import error
 import re
 import webbrowser
 from analizadorlexico import analizadorlexico
+from partidopuntos import partidopuntos
 class analizadorsintactico:
     def __init__(self):
         self.listaTokens = []
@@ -12,6 +13,7 @@ class analizadorsintactico:
         self.resultado = []
         self.Jornada = []
         self.Parti = []
+        self.PartiObt = []
 
     def analizar(self, listaTokens, listaErrores, listaPartidos, resultado):
         self.listaTokens= listaTokens
@@ -305,7 +307,7 @@ class analizadorsintactico:
                                     print("Todo correcto")
                                     docu=self.archivoopp()
                                     print(docu)
-                                    self.Tabla(primerano,segunano,docu)
+                                    self.Agregar(primerano,segunano)
                                 else:
                                     #Se esperaba signo mayor
                                     self.listaErrores.append(error('Error Sintactico', token.lexema, token.fila, token.columna))
@@ -644,6 +646,76 @@ class analizadorsintactico:
             if partido['Temporada'] == temporada:
                 pass
 
+    def Agregar(self,primerano,segunano):
+        viendo = []
+        dic = []
+        temporada = str(primerano) + '-' + str(segunano)
+        for partido in self.listaPartidos:
+            if partido['Temporada'] == temporada:
+                viendo.append(partido["Equipo1"])
+                viendo.append(partido["Equipo2"])
+                dic.append(partido)
+            else: 
+                pass
+        viendo=list(set(viendo))       
+        for partido in dic:
+            for ver in viendo:
+                if partido['Equipo1'] == ver:
+                    res=self.listavacia(self.PartiObt) 
+                    print(res)
+                    if res==False:
+                        for e in self.PartiObt:
+                            if e.getPartido()==ver:
+                                if partido['Goles1']> partido['Goles2']:
+                                    e.setPuntos(int(e.puntos)+int(3))
+                                elif partido['Goles1']==partido['Goles2']:
+                                    e.setPuntos(int(e.puntos)+int(1))
+                                else:
+                                    e.setPuntos(int(e.puntos)+int(0))
+                            else:
+                                if partido['Goles1']> partido['Goles2']:
+                                    self.PartiObt.append(partidopuntos(partido['Equipo1'],int(3)))
+                                elif partido['Goles1']==partido['Goles2']:
+                                    self.PartiObt.append(partidopuntos(partido['Equipo1'],int(1)))
+                                else:
+                                    self.PartiObt.append(partidopuntos(partido['Equipo1'],int(0)))
+                    else:
+                        if partido['Goles1']> partido['Goles2']:
+                            self.PartiObt.append(partidopuntos(partido['Equipo1'],int(3)))
+                        elif partido['Goles1']==partido['Goles2']:
+                            self.PartiObt.append(partidopuntos(partido['Equipo1'],int(1)))
+                        else:
+                            self.PartiObt.append(partidopuntos(partido['Equipo1'],int(0)))
+                elif partido['Equipo2'] == ver:
+                    es=self.listavacia(self.PartiObt)
+                    print(es) 
+                    if es==False:
+                        for e in self.PartiObt:
+                            if e.getPartido()==ver:
+                                if partido['Goles1']<partido['Goles2']:
+                                    e.setPuntos(int(e.puntos)+int(3))
+                                elif partido['Goles1']==partido['Goles2']:
+                                    e.setPuntos(int(e.puntos)+int(1))
+                                else:
+                                    e.setPuntos(int(e.puntos)+int(0))
+                            else:
+                                    if partido['Goles1'] < partido['Goles2']:
+                                        self.PartiObt.append(partidopuntos(partido['Equipo2'],int(3)))
+                                    elif partido['Goles1']==partido['Goles2']:
+                                        self.PartiObt.append(partidopuntos(partido['Equipo2'],int(1)))
+                                    else:
+                                        self.PartiObt.append(partidopuntos(partido['Equipo2'],int(0)))
+
+                    else:
+                        if partido['Goles1'] < partido['Goles2']:
+                            self.PartiObt.append(partidopuntos(partido['Equipo2'],int(3)))
+                        elif partido['Goles1']==partido['Goles2']:
+                            self.PartiObt.append(partidopuntos(partido['Equipo2'],int(1)))
+                        else:
+                            self.PartiObt.append(partidopuntos(partido['Equipo2'],int(0)))
+
+        print(self.PartiObt)          
+
     def HTMLJORNADA(self,docu):
         texto1 = """<!doctype html>
                 <html lang="en">
@@ -753,3 +825,6 @@ class analizadorsintactico:
         doc.write(bytes(texto1,"'utf-8'"))
         doc.close()
         webbrowser.open_new_tab(docu+'.html')
+    
+    def listavacia(self,lista):
+        return not lista
