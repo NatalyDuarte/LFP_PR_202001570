@@ -28,6 +28,7 @@ class analizadorsintactico:
         self.Parti = []
         self.PartiObt = []
         self.PartiObt1 = []
+        self.PartiObt2 = []
         self.inicio()
 
     def inicio(self):
@@ -513,8 +514,12 @@ class analizadorsintactico:
                                     self.Agregar(primerano,segunano)
                                     self.TOP(condicion,docu)
                                     prueba="\n"
-                                    for recu in self.PartiObt2:
-                                        prueba=prueba+"Partido: "+recu.partido+" Punteo: "+str(recu.puntos)+"\n"
+                                    if condicion=="SUPERIOR":
+                                        for recu in range(len(self.PartiObt2)):
+                                            prueba=prueba+"Partido: "+self.PartiObt2[len(self.PartiObt2)-1-recu].partido+" Punteo: "+str(self.PartiObt2[len(self.PartiObt2)-1-recu].puntos)+"\n"
+                                    elif condicion=="INFERIOR":
+                                        for recu in range(len(self.PartiObt2)):
+                                            prueba=prueba+"Partido: "+self.PartiObt2[recu].partido+" Punteo: "+str(self.PartiObt2[recu].puntos)+"\n"
                                     self.resultado.append("El top "+condicion.lower()+" de la temporada "+primerano+"-"+segunano+" fue: " +prueba)
                                 else:
                                     #Se esperaba signo mayor
@@ -663,7 +668,7 @@ class analizadorsintactico:
                 contador +=1
             inicio=contador-int(docu)
             for reco in range(inicio,contador):
-                self.PartiObt2.append(self.PartiObt1[reco-1])
+                self.PartiObt2.append(self.PartiObt1[reco])
         elif condicion=="INFERIOR":
             for reco in range(0,int(docu)):
                 self.PartiObt2.append(self.PartiObt1[reco])
