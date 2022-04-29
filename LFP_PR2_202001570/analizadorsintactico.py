@@ -14,6 +14,7 @@ class analizadorsintactico:
         self.Jornada = []
         self.Parti = []
         self.PartiObt = []
+        self.PartiObt1 = []
 
     def analizar(self, listaTokens, listaErrores, listaPartidos, resultado):
         self.listaTokens= listaTokens
@@ -307,7 +308,9 @@ class analizadorsintactico:
                                     print("Todo correcto")
                                     docu=self.archivoopp()
                                     print(docu)
+                                    self.resultado.append("Generando archivo de clasificación de temporada "+primerano+"-"+segunano)
                                     self.Agregar(primerano,segunano)
+                                    self.HTMLTABLA(docu)
                                 else:
                                     #Se esperaba signo mayor
                                     self.listaErrores.append(error('Error Sintactico', token.lexema, token.fila, token.columna))
@@ -661,60 +664,20 @@ class analizadorsintactico:
         for partido in dic:
             for ver in viendo:
                 if partido['Equipo1'] == ver:
-                    res=self.listavacia(self.PartiObt) 
-                    print(res)
-                    if res==False:
-                        for e in self.PartiObt:
-                            if e.getPartido()==ver:
-                                if partido['Goles1']> partido['Goles2']:
-                                    e.setPuntos(int(e.puntos)+int(3))
-                                elif partido['Goles1']==partido['Goles2']:
-                                    e.setPuntos(int(e.puntos)+int(1))
-                                else:
-                                    e.setPuntos(int(e.puntos)+int(0))
-                            else:
-                                if partido['Goles1']> partido['Goles2']:
-                                    self.PartiObt.append(partidopuntos(partido['Equipo1'],int(3)))
-                                elif partido['Goles1']==partido['Goles2']:
-                                    self.PartiObt.append(partidopuntos(partido['Equipo1'],int(1)))
-                                else:
-                                    self.PartiObt.append(partidopuntos(partido['Equipo1'],int(0)))
+                    if partido['Goles1']> partido['Goles2']:
+                        self.PartiObt.append(partidopuntos(partido['Equipo1'],int(3)))
+                    elif partido['Goles1']==partido['Goles2']:
+                        self.PartiObt.append(partidopuntos(partido['Equipo1'],int(1)))
                     else:
-                        if partido['Goles1']> partido['Goles2']:
-                            self.PartiObt.append(partidopuntos(partido['Equipo1'],int(3)))
-                        elif partido['Goles1']==partido['Goles2']:
-                            self.PartiObt.append(partidopuntos(partido['Equipo1'],int(1)))
-                        else:
-                            self.PartiObt.append(partidopuntos(partido['Equipo1'],int(0)))
+                        self.PartiObt.append(partidopuntos(partido['Equipo1'],int(0)))
                 elif partido['Equipo2'] == ver:
-                    es=self.listavacia(self.PartiObt)
-                    print(es) 
-                    if es==False:
-                        for e in self.PartiObt:
-                            if e.getPartido()==ver:
-                                if partido['Goles1']<partido['Goles2']:
-                                    e.setPuntos(int(e.puntos)+int(3))
-                                elif partido['Goles1']==partido['Goles2']:
-                                    e.setPuntos(int(e.puntos)+int(1))
-                                else:
-                                    e.setPuntos(int(e.puntos)+int(0))
-                            else:
-                                    if partido['Goles1'] < partido['Goles2']:
-                                        self.PartiObt.append(partidopuntos(partido['Equipo2'],int(3)))
-                                    elif partido['Goles1']==partido['Goles2']:
-                                        self.PartiObt.append(partidopuntos(partido['Equipo2'],int(1)))
-                                    else:
-                                        self.PartiObt.append(partidopuntos(partido['Equipo2'],int(0)))
-
+                    if partido['Goles1'] < partido['Goles2']:
+                        self.PartiObt.append(partidopuntos(partido['Equipo2'],int(3)))
+                    elif partido['Goles1']==partido['Goles2']:
+                        self.PartiObt.append(partidopuntos(partido['Equipo2'],int(1)))
                     else:
-                        if partido['Goles1'] < partido['Goles2']:
-                            self.PartiObt.append(partidopuntos(partido['Equipo2'],int(3)))
-                        elif partido['Goles1']==partido['Goles2']:
-                            self.PartiObt.append(partidopuntos(partido['Equipo2'],int(1)))
-                        else:
-                            self.PartiObt.append(partidopuntos(partido['Equipo2'],int(0)))
+                        self.PartiObt.append(partidopuntos(partido['Equipo2'],int(0)))
 
-        print(self.PartiObt)          
 
     def HTMLJORNADA(self,docu):
         texto1 = """<!doctype html>
@@ -828,3 +791,53 @@ class analizadorsintactico:
     
     def listavacia(self,lista):
         return not lista
+
+    def HTMLTABLA(self,docu):
+        texto1 = """<!doctype html>
+                <html lang="en">
+                <head>
+  	            <title>Tabla temporada</title>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+                <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	            <link rel="stylesheet" href="css/style.css">
+                <H1><font color="Olive" face="Comic Sans MS,arial">Nataly Saraí Guzmán Duarte 202001570</font></H1>
+	            </head>
+	            <body style="background-color:pink;">
+	                <section class="ftco-section">
+		            <div class="container">
+			            <div class="row justify-content-center">
+				            <div class="col-md-6 text-center mb-5">
+					            <h2 class="heading-section">Tabla Temporada</h2>
+				            </div>
+			            </div>
+			        <div class="row">
+				        <div class="col-md-12">
+					        <div class="table-wrap">
+						        <table class="table table-dark">
+						            <thead>
+						                <tr class="bg-dark">
+						                <th>Equipo</th>
+                                        <th>Puntos</th>
+						                </tr>
+						            </thead>"""
+        for jornada in self.PartiObt:
+            texto1 = texto1 + "<tr class=\"bg-primary\"><td><center>"+str(jornada.partido)+"</center></td><td><center>"+str(jornada.puntos)+"</center></td></tr>"
+        texto= """</tr>
+                 </tbody>
+				    </table>
+					</div>
+				</div>
+			</div>
+		</div>
+        """
+        conti="""</section>
+	            </body>
+            </html>
+            """
+        texto1=texto1+texto+conti
+        doc = open(docu+'.html','wb')
+        doc.write(bytes(texto1,"'utf-8'"))
+        doc.close()
+        webbrowser.open_new_tab(docu+'.html')

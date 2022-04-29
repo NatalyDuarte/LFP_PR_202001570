@@ -14,6 +14,7 @@ class partidopuntos:
 
     def setPuntos(self, puntos):
         self.puntos = puntos
+    
 
     def __repr__(self):
         return "Nombre del partido:"+ self.partido +" Puntos:" + str(self.puntos)
