@@ -16,6 +16,7 @@ class analizadorsintactico:
         self.Parti = []
         self.PartiObt = []
         self.PartiObt1 = []
+        self.PartiObt2 = []
 
     def analizar(self, listaTokens, listaErrores, listaPartidos, resultado):
         self.listaTokens= listaTokens
@@ -512,7 +513,7 @@ class analizadorsintactico:
                                     self.Agregar(primerano,segunano)
                                     self.TOP(condicion,docu)
                                     prueba="\n"
-                                    for recu in self.PartiObt1:
+                                    for recu in self.PartiObt2:
                                         prueba=prueba+"Partido: "+recu.partido+" Punteo: "+str(recu.puntos)+"\n"
                                     self.resultado.append("El top "+condicion.lower()+" de la temporada "+primerano+"-"+segunano+" fue: " +prueba)
                                 else:
@@ -656,19 +657,19 @@ class analizadorsintactico:
     
     def TOP(self,condicion,docu):
         contador=0
-        self.PartiObt.sort(key=lambda x:x.puntos)
+        self.PartiObt1.sort(key=lambda x:x.puntos)
         if condicion=="SUPERIOR":
-            for reco in range(len(self.PartiObt)):
+            for reco in range(len(self.PartiObt1)):
                 contador +=1
             inicio=contador-int(docu)
             for reco in range(inicio,contador):
-                self.PartiObt1.append(self.PartiObt[reco])
+                self.PartiObt2.append(self.PartiObt1[reco-1])
         elif condicion=="INFERIOR":
             for reco in range(0,int(docu)):
-                self.PartiObt1.append(self.PartiObt[reco])
+                self.PartiObt2.append(self.PartiObt1[reco])
         else:
             pass
-        print(self.PartiObt1)
+        print(self.PartiObt2)
 
     def Agregar(self,primerano,segunano):
         viendo = []
@@ -681,24 +682,38 @@ class analizadorsintactico:
                 dic.append(partido)
             else: 
                 pass
-        viendo=list(set(viendo))       
+        viendo=list(set(viendo))  
+        puntoseq1=0
+        puntoseq2=0     
         for partido in dic:
             for ver in viendo:
                 if partido['Equipo1'] == ver:
-                    if partido['Goles1']> partido['Goles2']:
-                        self.PartiObt.append(partidopuntos(partido['Equipo1'],int(3)))
-                    elif partido['Goles1']==partido['Goles2']:
-                        self.PartiObt.append(partidopuntos(partido['Equipo1'],int(1)))
-                    else:
-                        self.PartiObt.append(partidopuntos(partido['Equipo1'],int(0)))
-                elif partido['Equipo2'] == ver:
-                    if partido['Goles1'] < partido['Goles2']:
-                        self.PartiObt.append(partidopuntos(partido['Equipo2'],int(3)))
-                    elif partido['Goles1']==partido['Goles2']:
-                        self.PartiObt.append(partidopuntos(partido['Equipo2'],int(1)))
-                    else:
-                        self.PartiObt.append(partidopuntos(partido['Equipo2'],int(0)))
-
+                    if  partido ['Goles1'] >  partido [ 'Goles2' ]:
+                        self.PartiObt.append(partidopuntos ( partido [ 'Equipo1' ], int ( 3 )))
+                    elif  partido [ 'Goles1' ] == partido [ 'Goles2' ]:
+                        self.PartiObt.append(partidopuntos ( partido [ 'Equipo1' ], int ( 1 )))
+                    else :
+                        self.PartiObt.append(partidopuntos ( partido [ 'Equipo1' ], int ( 0 )))
+                elif  partido [ 'Equipo2' ] ==  ver :
+                    if  partido [ 'Goles1' ] <  partido [ 'Goles2' ]:
+                        self.PartiObt.append ( partidopuntos ( partido [ 'Equipo2' ], int ( 3 )))
+                    elif  partido [ 'Goles1' ] == partido [ 'Goles2' ]:
+                        self.PartiObt.append ( partidopuntos ( partido [ 'Equipo2' ], int ( 1 )))
+                    else :
+                        self.PartiObt.append ( partidopuntos ( partido [ 'Equipo2' ], int ( 0 )))
+        global diccionario_partido
+        diccionario_partido={}
+        for recorriendo in self.PartiObt:
+            if recorriendo.partido in diccionario_partido:
+                punto_anterior=diccionario_partido[recorriendo.partido]
+                punto_nuevo=punto_anterior+recorriendo.puntos
+                diccionario_partido[recorriendo.partido]=punto_nuevo
+            else:
+                diccionario_partido[recorriendo.partido]=recorriendo.puntos
+        lista_keys=list(diccionario_partido.keys())
+        lista_values=list(diccionario_partido.values())
+        for i in range(len(lista_keys)):
+            self.PartiObt1.append(partidopuntos(lista_keys[i],lista_values[i]))
 
     def HTMLJORNADA(self,docu):
         texto1 = """<!doctype html>
@@ -843,7 +858,7 @@ class analizadorsintactico:
                                         <th>Puntos</th>
 						                </tr>
 						            </thead>"""
-        for jornada in self.PartiObt:
+        for jornada in self.PartiObt1:
             texto1 = texto1 + "<tr class=\"bg-primary\"><td><center>"+str(jornada.partido)+"</center></td><td><center>"+str(jornada.puntos)+"</center></td></tr>"
         texto= """</tr>
                  </tbody>
