@@ -36,6 +36,7 @@ class Ventana(QMainWindow):
             }
             self.partidos_arre.append(p)
         self.partidos_arre.pop(0)
+        self.imprimir()
         self.pushButton.clicked.connect(self.send)
         self.pushButton_4.clicked.connect(self.anali)
         self.pushButton_3.clicked.connect(self.borrarerro)
@@ -45,10 +46,10 @@ class Ventana(QMainWindow):
         self.pushButton_7.clicked.connect(self.abrirmanu1)
     
     def abrirmanu(self):
-        webbrowser.open_new_tab('Manual de usuario.pdf')
+        webbrowser.open_new_tab('Manual_de_usuario.pdf')
 
     def abrirmanu1(self):
-        webbrowser.open_new_tab('Manual tecnico.pdf')
+        webbrowser.open_new_tab('Manual_tecnico.pdf')
 
     def lectura(self,ruta):
         archi=open(ruta, 'r')
@@ -76,6 +77,9 @@ class Ventana(QMainWindow):
                         self.textEdit.append('\n'+'BOT: No se encontraron resultados')
                 else:
                     messagebox.showwarning("Alert","La sintaxis no es correcta")
+        if self.resultado[0]=="ADIOS":
+            messagebox.showwarning("Alert","ADIOS")
+            sys.exit(1)
         self.imprimir()
         
 

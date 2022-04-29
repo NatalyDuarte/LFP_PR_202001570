@@ -22,6 +22,11 @@ class analizadorsintactico:
         self.listaErrores= listaErrores
         self.listaPartidos = listaPartidos
         self.resultado = resultado
+        self.i=0
+        self.Jornada = []
+        self.Parti = []
+        self.PartiObt = []
+        self.PartiObt1 = []
         self.inicio()
 
     def inicio(self):
