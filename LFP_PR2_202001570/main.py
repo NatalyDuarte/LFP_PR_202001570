@@ -14,7 +14,8 @@ class Ventana(QMainWindow):
         self.resultado= []
         self.partidos_arre=[]
         self.listaTokens = []
-        self.listaErrores = []
+        self.listaErroresLex = []
+        self.listaErroresSin = []
         self.i=0
         super().__init__()
         loadUi("princi.ui", self)
@@ -59,17 +60,17 @@ class Ventana(QMainWindow):
 
     def send(self):
         archivo = self.lineEdit.text()
-        anali.analizar(archivo,self.listaTokens,self.listaErrores)
-        analisin.analizar(self.listaTokens, self.listaErrores,self.partidos_arre,self.resultado)
-        if len(self.listaErrores)==0:
+        anali.analizar(archivo,self.listaTokens,self.listaErroresLex)
+        analisin.analizar(self.listaTokens, self.listaErroresSin,self.partidos_arre,self.resultado)
+        if len(self.listaErroresSin)==0:
             self.textEdit.append('\n'+'YOU: '+archivo)
             if len(self.resultado)>0:
                 self.textEdit.append('\n'+'BOT: '+str(self.resultado[0]))
             else:
                 self.textEdit.append('\n'+'BOT: No se encontraron resultados') 
         else:
-            for o in range(len(self.listaErrores)):
-                if self.listaErrores[o].tipo!='Error Sintactico':
+            for o in range(len(self.listaErroresSin)):
+                if self.listaErroresSin[o].tipo==None:
                     self.textEdit.append('\n'+'YOU: '+archivo)
                     if len(self.resultado)>0:
                         self.textEdit.append('\n'+'BOT: '+str(self.resultado[0]))
@@ -77,9 +78,10 @@ class Ventana(QMainWindow):
                         self.textEdit.append('\n'+'BOT: No se encontraron resultados')
                 else:
                     messagebox.showwarning("Alert","La sintaxis no es correcta")
-        if self.resultado[0]=="ADIOS":
-            messagebox.showwarning("Alert","ADIOS")
-            sys.exit(1)
+        if len(self.resultado)>0:
+            if self.resultado[0]=="ADIOS":
+                messagebox.showwarning("Alert","ADIOS")
+                sys.exit(1)
         self.imprimir()
         
 
@@ -87,7 +89,8 @@ class Ventana(QMainWindow):
         self.HTMLTOKENS()
     
     def borrarerro(self):
-        self.listaErrores = []
+        self.listaErroresLex = []
+        self.listaErroresSin = []
         self.resultado = []
         self.imprimir()
 
@@ -98,14 +101,19 @@ class Ventana(QMainWindow):
     
     def reporerrores(self):
         self.HTMLERRORES()
+        self.HTMLERRORES1()
     
     def imprimir(self):
         print("\n\n==========Lista tokens===============")
         for i in self.listaTokens:
             i.strToken()
 
-        print("\n\n==========Lista errores===============")
-        for o in self.listaErrores:
+        print("\n\n==========Lista errores Lexicos===============")
+        for o in self.listaErroresLex:
+            o.strError()
+
+        print("\n\n==========Lista errores Sintacticos===============")
+        for o in self.listaErroresSin:
             o.strError()
 
     def HTMLERRORES(self):
@@ -140,8 +148,8 @@ class Ventana(QMainWindow):
 						                <th>Columna</th>
 						                </tr>
 						            </thead>"""
-        for f in range(0,len(self.listaErrores)):
-            texto1 = texto1 + "<tr class=\"bg-primary\"><td><center>"+self.listaErrores[f-1].tipo+"</center></td><td><center>"+self.listaErrores[f-1].descripcion+"</center></td><td><center>"+str(self.listaErrores[f-1].fila)+"</center></td><td><center>"+str(self.listaErrores[f-1].columna)+"</center></td></tr>"
+        for f in range(0,len(self.listaErroresLex)):
+            texto1 = texto1 + "<tr class=\"bg-primary\"><td><center>"+self.listaErroresLex[f-1].tipo+"</center></td><td><center>"+self.listaErroresLex[f-1].descripcion+"</center></td><td><center>"+str(self.listaErroresLex[f-1].fila)+"</center></td><td><center>"+str(self.listaErroresLex[f-1].columna)+"</center></td></tr>"
         texto= """</tr>
                  </tbody>
 				    </table>
@@ -159,6 +167,58 @@ class Ventana(QMainWindow):
         doc.write(bytes(texto1,"'utf-8'"))
         doc.close()
         webbrowser.open_new_tab('ReporteErrorLex.html')
+
+    def HTMLERRORES1(self):
+        texto1 = """<!doctype html>
+                <html lang="en">
+                <head>
+  	            <title>Reporte de Errores Lexicos</title>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+                <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	            <link rel="stylesheet" href="css/style.css">
+                <H1><font color="Olive" face="Comic Sans MS,arial">Nataly Saraí Guzmán Duarte 202001570</font></H1>
+	            </head>
+	            <body style="background-color:pink;">
+	                <section class="ftco-section">
+		            <div class="container">
+			            <div class="row justify-content-center">
+				            <div class="col-md-6 text-center mb-5">
+					            <h2 class="heading-section">Tabla de Errores</h2>
+				            </div>
+			            </div>
+			        <div class="row">
+				        <div class="col-md-12">
+					        <div class="table-wrap">
+						        <table class="table table-dark">
+						            <thead>
+						                <tr class="bg-dark">
+						                <th>Tipo de token</th>
+						                <th>Lexema</th>
+						                <th>Fila</th>
+						                <th>Columna</th>
+						                </tr>
+						            </thead>"""
+        for f in range(0,len(self.listaErroresSin)):
+            texto1 = texto1 + "<tr class=\"bg-primary\"><td><center>"+self.listaErroresSin[f-1].tipo+"</center></td><td><center>"+self.listaErroresSin[f-1].descripcion+"</center></td><td><center>"+str(self.listaErroresSin[f-1].fila)+"</center></td><td><center>"+str(self.listaErroresSin[f-1].columna)+"</center></td></tr>"
+        texto= """</tr>
+                 </tbody>
+				    </table>
+					</div>
+				</div>
+			</div>
+		</div>
+        """
+        conti="""</section>
+	            </body>
+            </html>
+            """
+        texto1=texto1+texto+conti
+        doc = open('ReporteErrorSin.html','wb')
+        doc.write(bytes(texto1,"'utf-8'"))
+        doc.close()
+        webbrowser.open_new_tab('ReporteErrorSin.html')
 
     def HTMLTOKENS(self):
         texto1 = """<!doctype html>
