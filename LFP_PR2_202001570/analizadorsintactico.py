@@ -613,19 +613,22 @@ class analizadorsintactico:
         temporada = str(primerano) + '-' + str(segunano)
         for partido in self.listaPartidos:
             if partido['Temporada'] == temporada:
-                if partido['Equipo1'] == parti or partido['Equipo2'] == parti:
+                if str(partido['Equipo1']) == str(parti) or str(partido['Equipo2']) == str(parti):
                     if tempo=="No":
                         self.Parti.append(partido)
                         self.resultado.append("Generando archivo de resultados de temporada "+partido['Temporada']+" del "+ parti)
                     else:
                         datos=tempo.split(",")
                         if int(partido['Jornada'])>=int(datos[0]) and int(partido['Jornada'])<=int(datos[1]):
+                            print("llego hasta qui")
                             self.Parti.append(partido)
                             self.resultado.append("Generando archivo de resultados de temporada "+partido['Temporada']+" del "+ parti)
                         else:
                             print("Error")
-
+                
         if len(self.Parti)>0:
+            self.HTMLPARTI(docu)
+        elif len(self.resultado)>0:
             self.HTMLPARTI(docu)
 
     def Goles(self,condicion,equipo,primerano,segunano):
