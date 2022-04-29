@@ -41,6 +41,14 @@ class Ventana(QMainWindow):
         self.pushButton_3.clicked.connect(self.borrarerro)
         self.pushButton_5.clicked.connect(self.borrartoke)
         self.pushButton_2.clicked.connect(self.reporerrores)
+        self.pushButton_6.clicked.connect(self.abrirmanu)
+        self.pushButton_7.clicked.connect(self.abrirmanu1)
+    
+    def abrirmanu(self):
+        webbrowser.open_new_tab('Manual de usuario.pdf')
+
+    def abrirmanu1(self):
+        webbrowser.open_new_tab('Manual tecnico.pdf')
 
     def lectura(self,ruta):
         archi=open(ruta, 'r')

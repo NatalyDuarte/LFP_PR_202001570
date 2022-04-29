@@ -1,3 +1,4 @@
+from ast import Lambda
 from tokens import tokens
 from error import error
 import re
@@ -503,7 +504,12 @@ class analizadorsintactico:
                                     print("Todo correcto")
                                     docu=self.archivop2()
                                     print(docu)
-                                    self.TOP(condicion,primerano,segunano,docu)
+                                    self.Agregar(primerano,segunano)
+                                    self.TOP(condicion,docu)
+                                    prueba="\n"
+                                    for recu in self.PartiObt1:
+                                        prueba=prueba+"Partido: "+recu.partido+" Punteo: "+str(recu.puntos)+"\n"
+                                    self.resultado.append("El top "+condicion.lower()+" de la temporada "+primerano+"-"+segunano+" fue: " +prueba)
                                 else:
                                     #Se esperaba signo mayor
                                     self.listaErrores.append(error('Error Sintactico', token.lexema, token.fila, token.columna))
@@ -643,11 +649,21 @@ class analizadorsintactico:
         print(contador1)
         self.resultado.append("Los goles anotados por el "+equipo+" en total en la temporada "+ temporada +" fueron "+str(contador1))
     
-    def TOP(self,condicion,primerano,segunano,docu):
-        temporada = str(primerano) + '-' + str(segunano)
-        for partido in self.listaPartidos:
-            if partido['Temporada'] == temporada:
-                pass
+    def TOP(self,condicion,docu):
+        contador=0
+        self.PartiObt.sort(key=lambda x:x.puntos)
+        if condicion=="SUPERIOR":
+            for reco in range(len(self.PartiObt)):
+                contador +=1
+            inicio=contador-int(docu)
+            for reco in range(inicio,contador):
+                self.PartiObt1.append(self.PartiObt[reco])
+        elif condicion=="INFERIOR":
+            for reco in range(0,int(docu)):
+                self.PartiObt1.append(self.PartiObt[reco])
+        else:
+            pass
+        print(self.PartiObt1)
 
     def Agregar(self,primerano,segunano):
         viendo = []
